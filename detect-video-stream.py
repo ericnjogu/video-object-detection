@@ -18,5 +18,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="detect objects in video")
     # credit for adding required arg - https://stackoverflow.com/a/24181138/315385
     parser.add_argument("source", help="- for standard input or a numeral that represents the webcam device number")
+    parser.add_argument("frozen_graph", help="path to frozen model graph")
     args = parser.parse_args()
     detect_video_stream(args.source)
