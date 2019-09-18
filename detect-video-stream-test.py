@@ -26,10 +26,10 @@ class ClassName(unittest.TestCase):
                         "--dryrun", "--classes", "1 5 8 34"], capture_output=True)
         self.assertEqual(result.returncode, 0, "there should be no error return code")
         args = json.loads(result.stdout)
-        self.assertEquals(args['source'], '-', "source differs")
-        self.assertEquals(args['path_to_frozen_graph'], "/tmp/graph.ext", "path to frozen graph differs")
-        self.assertEquals(args['cutoff'], "88", "cutoff score differs")
-        self.assertEquals(args['classes'], "1 5 8 34", "classes differ")
+        self.assertEqual(args['source'], '-', "source differs")
+        self.assertEqual(args['path_to_frozen_graph'], "/tmp/graph.ext", "path to frozen graph differs")
+        self.assertEqual(args['cutoff'], "88", "cutoff score differs")
+        self.assertEqual(args['classes'], "1 5 8 34", "classes differ")
 
 if __name__ == "__main__":
     unittest.main()
