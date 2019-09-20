@@ -7,22 +7,14 @@ import json
 class ClassName(unittest.TestCase):
     """testing detect-video-stream.py"""
 
-    def test_source_arg(self):
-        """ running file without source parameter should show error and return non-zero status"""
-        try:
-            result = subprocess.run(["python", "./detect-video-stream.py"])
-            self.assertNotEqual(result.returncode, 0, "there should have been an error due to missing source arg")
-        except:
-            logging.error(sys.exc_info()[0])
-
-    def test_frozen_graph_arg(self):
-        """ running file without frozen graph arg parameter should show error and return non-zero status"""
-        result = subprocess.run(["python", "./detect-video-stream.py", "-"])
-        self.assertNotEqual(result.returncode, 0, "there should have been an error due to missing frozen arg")
+    def test_required_args(self):
+        """ running file without path to label map parameter should show error and return non-zero status"""
+        result = subprocess.run(["python", "./detect-video-stream.py", "-", "/tmp/graph.pb", "/path/to/label-map.txt"])
+        self.assertEqual(result.returncode, 0, "there should be no errors, all positional args are present")
 
     def test_optional_args(self):
         """ test that optional args are correctly received """
-        result = subprocess.run(["python", "./detect-video-stream.py", "-", "/tmp/graph.ext", "--cutoff", "88",
+        result = subprocess.run(["python", "./detect-video-stream.py", "-", "/tmp/graph.ext", "/path/to/label-map.txt", "--cutoff", "88",
                         "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10"], capture_output=True)
         assert len(result.stderr) == 0
         self.assertEqual(result.returncode, 0, "there should be no error return code")
