@@ -13,11 +13,8 @@ SAMPLE_RATE = 5
 ###
 def detect_video_stream(args):
     """ detect objects in video stream """
-    # credit for retrieving current file path - http://www.karoltomala.com/blog/?p=622
-    #logging.debug(f"in {os.path.abspath(__file__)}: detect_video_stream()")
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385
     if args.dryrun:
-        # logging.debug("dry run turned on")
         sys.stdout.writelines(json.dumps(args.__dict__))
 
 if __name__ == "__main__":
