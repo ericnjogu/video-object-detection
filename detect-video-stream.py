@@ -8,6 +8,7 @@ import json
 # run inference
 # echo output as json file - explore whether we will output numpy array or create a temp file with frame
 CUT_OFF_SCORE = 90
+SAMPLE_RATE = 5
 
 ###
 def detect_video_stream(args):
@@ -16,7 +17,7 @@ def detect_video_stream(args):
     #logging.debug(f"in {os.path.abspath(__file__)}: detect_video_stream()")
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385
     if args.dryrun:
-        logging.debug("dry run turned on")
+        # logging.debug("dry run turned on")
         sys.stdout.writelines(json.dumps(args.__dict__))
 
 if __name__ == "__main__":
@@ -29,5 +30,6 @@ if __name__ == "__main__":
     parser.add_argument("--dryrun", help="echo a params as json object, don't process anything", action="store_true")
     parser.add_argument("--classes",
             help="space separated list of object classes to detect as specified in label mapping")
+    parser.add_argument("--samplerate", help="how often to retrieve video frames for object detection")
     args = parser.parse_args()
     detect_video_stream(args)
