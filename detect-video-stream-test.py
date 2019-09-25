@@ -3,18 +3,19 @@ import subprocess
 import logging
 import sys
 import json
+import detect_video_stream
 
 class ClassName(unittest.TestCase):
-    """testing detect-video-stream.py"""
+    """testing detect_video_stream.py"""
 
     def test_required_args(self):
         """ running file without path to label map parameter should show error and return non-zero status"""
-        result = subprocess.run(["python", "./detect-video-stream.py", "-", "/tmp/graph.pb", "/path/to/label-map.txt"])
+        result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.pb", "/path/to/label-map.txt", "--dryrun"])
         self.assertEqual(result.returncode, 0, "there should be no errors, all positional args are present")
 
     def test_optional_args(self):
         """ test that optional args are correctly received """
-        result = subprocess.run(["python", "./detect-video-stream.py", "-", "/tmp/graph.ext", "/path/to/label-map.txt", "--cutoff", "88",
+        result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.ext", "/path/to/label-map.txt", "--cutoff", "88",
                         "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10"], capture_output=True)
         assert len(result.stderr) == 0
         self.assertEqual(result.returncode, 0, "there should be no error return code")
