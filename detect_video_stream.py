@@ -25,6 +25,7 @@ def detect_video_stream(args):
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385
     if args.dryrun:
         sys.stdout.writelines(json.dumps(args.__dict__))
+        return
     # TODO validate args
     detection_graph = object_detection.load_frozen_model_into_memory(args.path_to_frozen_graph)
     # determine sample rate
