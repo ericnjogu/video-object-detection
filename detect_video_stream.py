@@ -32,12 +32,12 @@ def determine_source(args, video_callable):
         returns a file object
     """
     if args.source == '-':
-        return sys.stdin
+        return video_callable(sys.stdin)
     elif args.source.isnumeric():
         return video_callable(args.source)
     elif os.path.exists(args.source):
         return video_callable(args.source)
-        
+
 def detect_video_stream(args):
     """ detect objects in video stream """
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385
