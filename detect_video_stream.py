@@ -6,6 +6,7 @@ import sys
 import json
 import cv2
 import object_detection
+import numpy as np
 # assemble inputs
 # run inference
 # echo output as json file - explore whether we will output numpy array or create a temp file with frame
@@ -56,12 +57,13 @@ def detect_video_stream(args):
         ret, frame = cap.read()
         # only consider frames that are a multiple of the sample rate
         if frame_count % sample_rate == 0:
-            image = object_detection.load_image_into_numpy_array(frame)
+            img_to_array = np.expand_dims(frame, axis=0)
+            # image = object_detection.load_image_into_numpy_array(img_to_array)
             # run inference
-            output_dict = object_detection.run_inference_for_single_image(image, detection_graph)
+            output_dict = object_detection.run_inference_for_single_image(img_to_array, detection_graph)
             # TODO filter for classes, cut off score
             # write JSON to stdout
-            sys.stdout.write(json.dumps(output_dict.__dict__()))
+            sys.stdout.write(json.dumps(output_dict))
         frame_count += 1
 
 
