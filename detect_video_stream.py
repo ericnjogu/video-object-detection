@@ -19,7 +19,7 @@ def determine_samplerate(args):
     except AttributeError:
         return SAMPLE_RATE
 
-def determine_source(args, video_callable):
+def determine_source(args, video_reader):
     """
     parameters:
         args: a namespace object from argparse.ArgumentParser.parse_args().
@@ -27,16 +27,16 @@ def determine_source(args, video_callable):
                 '-' (hyphen): standard input
                 digit: webcam
                 URL: file path
-        video_callable: the class/function to use to read video from file or camera, useful for mocking
+        video_reader: the class/function to use to read video from file or camera, useful for mocking
 
         returns a file object
     """
     if args.source == '-':
-        return video_callable(sys.stdin)
+        return video_reader(sys.stdin)
     elif args.source.isnumeric():
-        return video_callable(args.source)
+        return video_reader(args.source)
     elif os.path.exists(args.source):
-        return video_callable(args.source)
+        return video_reader(args.source)
 
 def detect_video_stream(args):
     """ detect objects in video stream """

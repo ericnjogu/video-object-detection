@@ -51,19 +51,19 @@ class ClassName(unittest.TestCase):
     def test_determine_source_webcam_device_number(self):
         args = mock.Mock()
         args.source = '2'
-        video_callable = mock.Mock().callable()
-        src = detect_video_stream.determine_source(args, video_callable)
-        video_callable.assert_called_once()
-        video_callable.assert_called_with('2')
+        video_reader = mock.Mock().callable()
+        src = detect_video_stream.determine_source(args, video_reader)
+        video_reader.assert_called_once()
+        video_reader.assert_called_with('2')
 
     def test_determine_source_url(self):
         args = mock.Mock()
         url = tempfile.NamedTemporaryFile(delete=False).name
         args.source = url
-        video_callable = mock.Mock().callable()
-        src = detect_video_stream.determine_source(args, video_callable)
-        video_callable.assert_called_once()
-        video_callable.assert_called_with(url)
+        video_reader = mock.Mock().callable()
+        src = detect_video_stream.determine_source(args, video_reader)
+        video_reader.assert_called_once()
+        video_reader.assert_called_with(url)
 
 if __name__ == "__main__":
     unittest.main()
