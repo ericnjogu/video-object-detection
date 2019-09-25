@@ -19,10 +19,23 @@ def determine_samplerate(args):
     except AttributeError:
         return SAMPLE_RATE
 
-def determine_source(args):
-    # TODO
-    pass
+def determine_source(args, video_callable):
+    """
+    parameters:
+        args: a namespace object from argparse.ArgumentParser.parse_args().
+            The source attribute determine which source the video is to be read load_frozen_model_into_memory and can be any of the following values
+                '-' (hyphen): standard input
+                digit: webcam
+                URL: file path
+        video_callable: the class/function to use to read video from file or camera, useful for mocking
 
+        returns a file object
+    """
+    if args.source == '-':
+        return sys.stdin
+    elif args.source.isnumeric():
+        return video_callable(args.source)
+        
 def detect_video_stream(args):
     """ detect objects in video stream """
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385

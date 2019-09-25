@@ -37,5 +37,19 @@ class ClassName(unittest.TestCase):
         sample_rate = detect_video_stream.determine_samplerate(args)
         assert sample_rate == 15, "when sample rate is specified, use it"
 
+    def test_determine_source_hyphen(self):
+        args = mock.Mock()
+        args.source = '-'
+        src = detect_video_stream.determine_source(args, mock.Mock().callable())
+        assert sys.stdin == src, "when a hyphen is given as the source, read from standard input"
+
+    def test_determine_source_webcam_device_number(self):
+        args = mock.Mock()
+        args.source = '2'
+        video_callable = mock.Mock().callable()
+        src = detect_video_stream.determine_source(args, video_callable)
+        video_callable.assert_called_once()
+        video_callable.assert_called_with('2')
+
 if __name__ == "__main__":
     unittest.main()
