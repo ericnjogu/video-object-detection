@@ -17,8 +17,6 @@ from io import StringIO
 from matplotlib import pyplot as plt
 from PIL import Image
 
-from object_detection.utils import ops as utils_ops
-
 if StrictVersion(tf.__version__) < StrictVersion('1.12.0'):
   raise ImportError('Please upgrade your TensorFlow installation to v1.12.*.')
 
