@@ -5,6 +5,7 @@ import sys
 import json
 import detect_video_stream
 import unittest.mock as mock
+import tempfile
 
 class ClassName(unittest.TestCase):
     """testing detect_video_stream.py"""
@@ -50,6 +51,15 @@ class ClassName(unittest.TestCase):
         src = detect_video_stream.determine_source(args, video_callable)
         video_callable.assert_called_once()
         video_callable.assert_called_with('2')
+
+    def test_determine_source_url(self):
+        args = mock.Mock()
+        url = tempfile.NamedTemporaryFile(delete=False).name
+        args.source = url
+        video_callable = mock.Mock().callable()
+        src = detect_video_stream.determine_source(args, video_callable)
+        video_callable.assert_called_once()
+        video_callable.assert_called_with(url)
 
 if __name__ == "__main__":
     unittest.main()

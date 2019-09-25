@@ -35,6 +35,8 @@ def determine_source(args, video_callable):
         return sys.stdin
     elif args.source.isnumeric():
         return video_callable(args.source)
+    elif os.path.exists(args.source):
+        return video_callable(args.source)
         
 def detect_video_stream(args):
     """ detect objects in video stream """
