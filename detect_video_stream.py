@@ -12,11 +12,14 @@ import object_detection
 CUT_OFF_SCORE = 90
 SAMPLE_RATE = 5
 
-def determine_samplerate(input_from_args):
-    # TODO
-    pass
+def determine_samplerate(args):
+    """ check for sample rate in args, if absent return default """
+    try:
+        return args.samplerate
+    except AttributeError:
+        return SAMPLE_RATE
 
-def determine_source(input_from_args):
+def determine_source(args):
     # TODO
     pass
 

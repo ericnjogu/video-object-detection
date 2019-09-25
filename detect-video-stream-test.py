@@ -4,6 +4,7 @@ import logging
 import sys
 import json
 import detect_video_stream
+import unittest.mock as mock
 
 class ClassName(unittest.TestCase):
     """testing detect_video_stream.py"""
@@ -25,6 +26,16 @@ class ClassName(unittest.TestCase):
         self.assertEqual(args['cutoff'], "88", "cutoff score differs")
         self.assertEqual(args['classes'], "1 5 8 34", "classes differ")
         self.assertEqual(args['samplerate'], "10", "samplerates differs")
+
+    def test_determine_samplerate_no_input(self):
+        sample_rate = detect_video_stream.determine_samplerate({})
+        assert sample_rate == detect_video_stream.SAMPLE_RATE, "when sample rate is not specified, use default"
+
+    def test_determine_samplerate_with_input(self):
+        args = mock.Mock()
+        args.samplerate = 15
+        sample_rate = detect_video_stream.determine_samplerate(args)
+        assert sample_rate == 15, "when sample rate is specified, use it"
 
 if __name__ == "__main__":
     unittest.main()
