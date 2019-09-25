@@ -62,8 +62,9 @@ def detect_video_stream(args):
             # run inference
             output_dict = object_detection.run_inference_for_single_image(img_to_array, detection_graph)
             # TODO filter for classes, cut off score
-            # write JSON to stdout
-            sys.stdout.write(json.dumps(output_dict))
+            # TODO convert output dict to JSON - there's an error writing nd_arrays into json
+            # write output dict to stdout
+            sys.stdout.write(str(output_dict))
         frame_count += 1
 
 
