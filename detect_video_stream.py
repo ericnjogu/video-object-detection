@@ -50,7 +50,7 @@ def detect_video_stream(args):
     sample_rate = determine_samplerate(args.samplerate)
     # loop over frames in video
     # adapted from https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
-    cap = cv2.VideoCapture(determine_source(args.source))
+    cap = determine_source(args, cv2.VideoCapture)
     frame_count = 0
     while (cap.isOpened()):
         ret, frame = cap.read()
