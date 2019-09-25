@@ -41,8 +41,12 @@ class ClassName(unittest.TestCase):
     def test_determine_source_hyphen(self):
         args = mock.Mock()
         args.source = '-'
-        src = detect_video_stream.determine_source(args, mock.Mock().callable())
-        assert sys.stdin == src, "when a hyphen is given as the source, read from standard input"
+
+        video_reader = mock.Mock().callable()
+        src = detect_video_stream.determine_source(args, video_reader)
+
+        video_reader.assert_called_once()
+        video_reader.assert_called_with(sys.stdin)
 
     def test_determine_source_webcam_device_number(self):
         args = mock.Mock()
