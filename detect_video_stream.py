@@ -83,7 +83,7 @@ def detect_video_stream(args):
             # OR write image to video out
             # credit - https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
             vis_utils.visualize_boxes_and_labels_on_image_array(
-                img_to_array,
+                frame,
                 output_dict['detection_boxes'],
                 output_dict['detection_classes'],
                 output_dict['detection_scores'],
@@ -91,16 +91,17 @@ def detect_video_stream(args):
                 instance_masks=output_dict.get('detection_masks'),
                 use_normalized_coordinates=True,
                 line_thickness=10)
-            cv2.imshow('frame', img_to_array)
-            output_rgb = cv2.cvtColor(img_to_array, cv2.COLOR_RGB2BGR)
-            out.write(output_rgb)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            # cv2.imshow('frame', frame)
+            output_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            video_out.write(output_rgb)
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
             frame_count += 1
+            logging.debug(f"just finished frame: {frame_count}")
 
     video_out.release()
     cap.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
