@@ -47,7 +47,8 @@ def detect_video_stream(args):
         sys.stdout.writelines(json.dumps(args.__dict__))
         return
     # generate dict from labels
-    category_index = label_utils.create_categories_from_labelmap(args.path_to_label_map, use_display_name=True)
+    category_index = label_utils.create_category_index_from_labelmap(args.path_to_label_map, use_display_name=True)
+    # logging.debug(f"category_index: {category_index}")
     # TODO validate args
     detection_graph = obj_detect.load_frozen_model_into_memory(args.path_to_frozen_graph)
     # determine sample rate
