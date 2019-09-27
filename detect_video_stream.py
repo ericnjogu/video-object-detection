@@ -87,7 +87,7 @@ def detect_video_stream(args):
                 output_dict['detection_classes'],
                 output_dict['detection_scores'],
                 category_index,
-                instance_masks=output_dict['detection_masks'],
+                instance_masks=output_dict.get('detection_masks'),
                 use_normalized_coordinates=True,
                 line_thickness=10)
             cv2.imshow('frame', img_to_array)
