@@ -53,6 +53,7 @@ def detect_video_stream(args):
     detection_graph = obj_detect.load_frozen_model_into_memory(args.path_to_frozen_graph)
     # determine sample rate
     sample_rate = determine_samplerate(args.samplerate)
+    # logging.debug(f"using sample_rate {sample_rate}")
     # loop over frames in video
     # adapted from https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
     cap = determine_source(args, cv2.VideoCapture)
@@ -67,8 +68,9 @@ def detect_video_stream(args):
                                 fps=10,
                                 frameSize=(int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))))
     frame_count = 0
-    while (cap.isOpened()):
+    while cap.isOpened():
         ret, frame = cap.read()
+        ##logging.debug(f"read status is {ret}")
         # only consider frames that are a multiple of the sample rate
         if frame_count % sample_rate == 0:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -91,17 +93,15 @@ def detect_video_stream(args):
                 instance_masks=output_dict.get('detection_masks'),
                 use_normalized_coordinates=True,
                 line_thickness=10)
-            # cv2.imshow('frame', frame)
             output_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             video_out.write(output_rgb)
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-            frame_count += 1
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
             logging.debug(f"just finished frame: {frame_count}")
+        frame_count += 1
 
     video_out.release()
     cap.release()
-    # cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
