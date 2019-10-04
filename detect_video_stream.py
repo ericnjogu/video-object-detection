@@ -35,6 +35,10 @@ def determine_cut_off_score(args):
 
     returns - the cut_off_score in args, if absent return default
     """
+    try:
+        return args.cutoff
+    except AttributeError:
+        return CUT_OFF_SCORE
 
 def determine_samplerate(args):
     try:
