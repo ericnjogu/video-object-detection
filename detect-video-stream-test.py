@@ -5,6 +5,8 @@ import json
 import detect_video_stream
 import unittest.mock as mock
 import tempfile
+import ast
+import numpy as np
 
 def test_required_args():
     """ running file without path to label map parameter should show error and return non-zero status"""
@@ -72,3 +74,16 @@ def test_determine_cut_off_score_present_in_args():
     args.cutoff = 51
     cut_off_score = detect_video_stream.determine_cut_off_score(args)
     assert cut_off_score == 51, "cut off score differs from provided value"
+
+def test_filter_detection_output():
+    # code to read dict from file adapted from https://stackoverflow.com/a/11027069/315385
+    with open('samples/output_dict_01.txt', 'r') as f:
+        text = f.read()
+        output_dict = eval(text)
+        result = detect_video_stream.filter_detection_output(output_dict, 14)
+        assert result is not None
+        assert len(result['detection_scores']) == 1
+        assert result['detection_scores'][0] == 0.14765409
+        assert len(result['detection_classes']) == 1
+        assert result['detection_classes'][0] == 16
+        assert result['num_detections'] == 1
