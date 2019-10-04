@@ -95,8 +95,6 @@ def detect_video_stream(args):
                 line_thickness=10)
             output_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             video_out.write(output_rgb)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
             logging.debug(f"just finished frame: {frame_count}")
         frame_count += 1
 
