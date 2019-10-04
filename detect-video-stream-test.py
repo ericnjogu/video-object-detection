@@ -14,8 +14,8 @@ def test_required_args():
 def test_optional_args():
     """ test that optional args are correctly received """
     result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.ext", "/path/to/label-map.txt", "--cutoff", "88",
-                    "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10"], capture_output=True)
-    assert len(result.stderr) == 0
+                    "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10"], stdout=subprocess.PIPE)
+    assert result.stderr is None
     assert result.returncode == 0, "there should be no error return code"
     args = json.loads(result.stdout)
     assert args['source'] == '-', "source differs"
