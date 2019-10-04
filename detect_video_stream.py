@@ -14,6 +14,28 @@ import object_detection.utils.label_map_util as label_utils
 CUT_OFF_SCORE = 90
 SAMPLE_RATE = 5
 
+def filter_detection_output(detection_output_dict, cut_off_score):
+    """
+    drop all detections from the dict whose score is less than the cut_off_score
+
+    args:
+    detection_output_dict - A dict returned from running obj_detect.run_inference_for_single_image()
+    cut_off_score - the minimum score to retain detections
+
+    return - the filtered dict
+    """
+    pass
+
+def determine_cut_off_score(args):
+    """
+    check for cut_off_score in args, if absent return default
+
+    Args:
+    args: a namespace object from argparse.ArgumentParser.parse_args()
+
+    returns - the cut_off_score in args, if absent return default
+    """
+
 def determine_samplerate(args):
     try:
         """ check for sample rate in args, if absent return default """
@@ -79,6 +101,8 @@ def detect_video_stream(args):
             # run inference
             output_dict = obj_detect.run_inference_for_single_image(img_to_array, detection_graph)
             # TODO filter for classes, cut off score
+            cut_off_score = determine_cut_off_score
+            output_dict = filter_detection_output(output_dict, cut_off_score)
             # TODO convert output dict to JSON - there's an error writing nd_arrays into json
             # TODO implement with switch from args - write output dict to stdout
             # sys.stdout.write(str(output_dict))
