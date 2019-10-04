@@ -60,3 +60,15 @@ def test_determine_source_url():
     src = detect_video_stream.determine_source(args, video_reader)
     video_reader.assert_called_once()
     video_reader.assert_called_with(url)
+
+def test_determine_cut_off_score_absent_in_args():
+    # simulate args not having the optional arg
+    args = {}
+    cut_off_score = detect_video_stream.determine_cut_off_score(args)
+    assert cut_off_score == detect_video_stream.CUT_OFF_SCORE, "cut off score differs from default value"
+
+def test_determine_cut_off_score_present_in_args():
+    args = mock.Mock()
+    args.cutoff = 51
+    cut_off_score = detect_video_stream.determine_cut_off_score(args)
+    assert cut_off_score == 51, "cut off score differs from provided value"
