@@ -186,7 +186,7 @@ if __name__ == "__main__":
     parser.add_argument("source", help="- for standard input, path to file or a numeral that represents the webcam device number")
     parser.add_argument("path_to_frozen_graph", help="path to frozen model graph")
     parser.add_argument("path_to_label_map", help="path to label map")
-    parser.add_argument("--cutoff", help="cut off detection score (%%)")
+    parser.add_argument("--cutoff", help="cut off detection score (%%), a value between 1 and 100")
     parser.add_argument("--dryrun", help="echo a params as json object, don't process anything", action="store_true")
     parser.add_argument("--classes",
             help="space separated list of object classes to detect as specified in label mapping")
