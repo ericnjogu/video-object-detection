@@ -105,3 +105,13 @@ def test_filter_detection_output_from_dict(setup_logging):
     assert result['detection_scores'][0] == 0.85
     assert len(result['detection_classes']) == 1
     assert result['detection_classes'][0] == 31
+
+def test_determine_source_name_hyphen():
+    assert "standard input" == detect_video_stream.determine_source_name('-')
+
+def test_determine_source_name_webcam_device_number():
+    assert "device 2" == detect_video_stream.determine_source_name('2')
+
+def test_determine_source_name_url():
+    url = tempfile.NamedTemporaryFile(delete=False, suffix='.avi').name
+    assert url == detect_video_stream.determine_source_name(url)

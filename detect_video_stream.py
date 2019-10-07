@@ -14,6 +14,23 @@ import object_detection.utils.label_map_util as label_utils
 CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5
 
+def determine_source_name(src):
+    """
+    parameters:
+        src: The source attribute determine which source the video is to be read, can be any of the following values
+                '-' (hyphen): standard input
+                digit: webcam
+                URL: file path
+
+        returns a descriptive string e.g. 'device 0'
+    """
+    if src == '-':
+        return "standard input"
+    elif src.isnumeric():
+        return f"device {src}"
+    elif os.path.exists(src):
+        return src
+
 def filter_detection_output(detection_output_dict, cut_off_score):
     """
     drop all detections from the dict whose score is less than the cut_off_score
