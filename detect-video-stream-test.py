@@ -7,6 +7,11 @@ import unittest.mock as mock
 import tempfile
 import ast
 import numpy as np
+import pytest
+
+@pytest.fixture(scope='function')
+def setup_logging():
+    logging.getLogger().setLevel(logging.DEBUG)
 
 def test_required_args():
     """ running file without path to label map parameter should show error and return non-zero status"""
@@ -75,15 +80,27 @@ def test_determine_cut_off_score_present_in_args():
     cut_off_score = detect_video_stream.determine_cut_off_score(args)
     assert cut_off_score == 51, "cut off score differs from provided value"
 
-def test_filter_detection_output():
+def test_filter_detection_output_from_file(setup_logging):
     # code to read dict from file adapted from https://stackoverflow.com/a/11027069/315385
     with open('samples/output_dict_01.txt', 'r') as f:
         text = f.read()
         output_dict = eval(text)
-        result = detect_video_stream.filter_detection_output(output_dict, 14)
+        result = detect_video_stream.filter_detection_output(output_dict, .14)
         assert result is not None
+        # logging.debug(f"test_filter_detection_output: {result}")
         assert len(result['detection_scores']) == 1
-        assert result['detection_scores'][0] == 0.14765409
+        assert pytest.approx(result['detection_scores'][0]) == 0.14765409
         assert len(result['detection_classes']) == 1
         assert result['detection_classes'][0] == 16
-        assert result['num_detections'] == 1
+
+def test_filter_detection_output_from_dict(setup_logging):
+    output_dict = {'detection_scores':[.23, .66, .85], 'detection_classes':[11, 2, 31], 'detection_boxes': [[0.5740724 , 0.28274727, 0.6627937 , 0.40734732],
+           [0.5740724 , 0.28274727, 0.6627937 , 0.40734732],
+           [0.56495595, 0.25473273, 0.6740638 , 0.43713987]]}
+    result = detect_video_stream.filter_detection_output(output_dict, .8)
+    assert result is not None
+    #logging.debug(f"test_filter_detection_output: {result}")
+    assert len(result['detection_scores']) == 1
+    assert result['detection_scores'][0] == 0.85
+    assert len(result['detection_classes']) == 1
+    assert result['detection_classes'][0] == 31

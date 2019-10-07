@@ -11,7 +11,7 @@ import tempfile
 import object_detection.utils.visualization_utils as vis_utils
 import object_detection.utils.label_map_util as label_utils
 
-CUT_OFF_SCORE = 90
+CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5
 
 def filter_detection_output(detection_output_dict, cut_off_score):
@@ -19,12 +19,26 @@ def filter_detection_output(detection_output_dict, cut_off_score):
     drop all detections from the dict whose score is less than the cut_off_score
 
     args:
-    detection_output_dict - A dict returned from running obj_detect.run_inference_for_single_image()
-    cut_off_score - the minimum score to retain detections
+    detection_output_dict - A dict returned frrom running obj_detect.run_inference_for_single_image()
+    cut_off_score - the minimum score to retain detections which is the percentage divided by 100. e.g. 30% will be passed in as 0.3
 
     return - the filtered dict
     """
-    pass
+    result = {}
+    # create a lambda function that returns an iterable of True/False values using map() on scores
+    score_retain_status_iter = lambda : map(lambda score: score >= cut_off_score, detection_output_dict['detection_scores'])
+    # logging.debug(f"true/false values of matching scores : {list(score_retain_status_iter())}")
+    # use the true/false values to filter out detection classes in the corresponding positions
+    iterator  = score_retain_status_iter()
+    result['detection_classes'] = list(filter(lambda x: next(iterator), detection_output_dict['detection_classes']))
+    # use the true/false values to filter out detection boxes in the corresponding positions
+    iterator  = score_retain_status_iter()
+    result['detection_boxes'] = list(filter(lambda x: next(iterator), detection_output_dict['detection_boxes']))
+    # use the true/false values to filter out detection scores in the corresponding positions
+    iterator  = score_retain_status_iter()
+    result['detection_scores'] = list(filter(lambda x: next(iterator), detection_output_dict['detection_scores']))
+
+    return result
 
 def determine_cut_off_score(args):
     """
