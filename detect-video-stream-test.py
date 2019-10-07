@@ -75,6 +75,13 @@ def test_determine_cut_off_score_absent_in_args():
     cut_off_score = detect_video_stream.determine_cut_off_score(args)
     assert cut_off_score == detect_video_stream.CUT_OFF_SCORE, "cut off score differs from default value"
 
+def test_determine_cut_off_score_none():
+    # Attribute error is not being thrown when the optional arg is not present, instead None is returned
+    args = mock.Mock()
+    args.cutoff = None
+    cut_off_score = detect_video_stream.determine_cut_off_score(args)
+    assert cut_off_score == detect_video_stream.CUT_OFF_SCORE, "cut off score differs from default value"
+
 def test_determine_cut_off_score_present_in_args():
     args = mock.Mock()
     args.cutoff = 51

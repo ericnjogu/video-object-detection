@@ -67,7 +67,10 @@ def determine_cut_off_score(args):
     returns - the cut_off_score in args, if absent return default
     """
     try:
-        return args.cutoff
+        if args.cutoff:
+            return args.cutoff
+        else:
+            return CUT_OFF_SCORE
     except AttributeError:
         return CUT_OFF_SCORE
 
