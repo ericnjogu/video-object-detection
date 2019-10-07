@@ -11,9 +11,22 @@ import tempfile
 import object_detection.utils.visualization_utils as vis_utils
 import object_detection.utils.label_map_util as label_utils
 from datetime import datetime as dt
+import platform
 
 CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5
+
+def determine_instance_name(instance_name):
+    """
+    parameters:
+        instance_name: the value provided via an optional arg --name. It is used to describe this detection instance
+
+        returns a descriptive string e.g. 'erics-laptop'
+    """
+    if instance_name:
+        return instance_name
+    else:
+        return platform.uname().node
 
 def determine_source_name(src):
     """
@@ -169,7 +182,8 @@ def detect_video_stream(args):
 
             # END move to visualization service
             if len(output_dict['detection_boxes']) > 0:
-                sys.stdout.write(str({'start_time': start_time,'output_dict':output_dict, 'name': args.name, 'frame': frame,
+                sys.stdout.writelines(str({'start_time': start_time,'output_dict':output_dict,
+                    'name': determine_instance_name(args.instance_name), 'frame': frame,
                     'frame_count':frame_count, 'source':determine_source_name(args.source)}))
             else:
                 logging.debug("no score was above cut-off, skipping")
