@@ -84,9 +84,9 @@ def test_determine_cut_off_score_none():
 
 def test_determine_cut_off_score_present_in_args():
     args = mock.Mock()
-    args.cutoff = 51
+    args.cutoff = '51'
     cut_off_score = detect_video_stream.determine_cut_off_score(args)
-    assert cut_off_score == 51, "cut off score differs from provided value"
+    assert cut_off_score == .51, "cut off score differs from provided value"
 
 def test_filter_detection_output_from_file(setup_logging):
     # code to read dict from file adapted from https://stackoverflow.com/a/11027069/315385

@@ -69,7 +69,7 @@ def determine_cut_off_score(args):
     """
     try:
         if args.cutoff:
-            return args.cutoff
+            return float(args.cutoff) / 100
         else:
             return CUT_OFF_SCORE
     except AttributeError:
