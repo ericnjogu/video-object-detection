@@ -169,8 +169,8 @@ def detect_video_stream(args):
 
             # END move to visualization service
             if len(output_dict['detection_boxes']) > 0:
-                sys.stdout.write({'start_time': start_time,'output_dict':output_dict, 'name': args.name, 'frame': frame,
-                    'frame_count':frame_count, 'source':determine_source_name(args.source)})
+                sys.stdout.write(str({'start_time': start_time,'output_dict':output_dict, 'name': args.name, 'frame': frame,
+                    'frame_count':frame_count, 'source':determine_source_name(args.source)}))
             else:
                 logging.debug("no score was above cut-off, skipping")
             logging.debug(f"just finished frame: {frame_count}")
