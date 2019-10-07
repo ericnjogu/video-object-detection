@@ -8,6 +8,7 @@ import tempfile
 import ast
 import numpy as np
 import pytest
+import platform
 
 @pytest.fixture(scope='function')
 def setup_logging():
@@ -122,3 +123,10 @@ def test_determine_source_name_webcam_device_number():
 def test_determine_source_name_url():
     url = tempfile.NamedTemporaryFile(delete=False, suffix='.avi').name
     assert url == detect_video_stream.determine_source_name(url)
+
+def test_determine_instance_name_not_provided():
+    assert platform.uname().node == detect_video_stream.determine_instance_name(None)
+
+def test_determine_instance_name_provided():
+    name = "backyard"
+    assert name == detect_video_stream.determine_instance_name(name)
