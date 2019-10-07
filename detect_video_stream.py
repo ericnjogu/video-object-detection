@@ -191,6 +191,6 @@ if __name__ == "__main__":
     parser.add_argument("--classes",
             help="space separated list of object classes to detect as specified in label mapping")
     parser.add_argument("--samplerate", help="how often to retrieve video frames for object detection")
-    parser.add_argument("--name", help="a descriptive name for this detection instance e.g. hostname")
+    parser.add_argument("--instance_name", help="a descriptive name for this detection instance e.g. hostname")
     args = parser.parse_args()
     detect_video_stream(args)

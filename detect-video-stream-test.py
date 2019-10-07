@@ -21,7 +21,7 @@ def test_required_args():
 def test_optional_args():
     """ test that optional args are correctly received """
     result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.ext", "/path/to/label-map.txt", "--cutoff", "88",
-                    "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10", "--name", "acer-ubuntu-18"], stdout=subprocess.PIPE)
+                    "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10", "--instance_name", "acer-ubuntu-18"], stdout=subprocess.PIPE)
     assert result.stderr is None
     assert result.returncode == 0, "there should be no error return code"
     args = json.loads(result.stdout)
@@ -30,7 +30,7 @@ def test_optional_args():
     assert args['cutoff'] == "88", "cutoff score differs"
     assert args['classes'] == "1 5 8 34", "classes differ"
     assert args['samplerate'] == "10", "samplerates differs"
-    assert args['name'] == "acer-ubuntu-18", "name differs"
+    assert args['instance_name'] == "acer-ubuntu-18", "name differs"
 
 def test_determine_samplerate_no_input():
     sample_rate = detect_video_stream.determine_samplerate({})
