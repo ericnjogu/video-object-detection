@@ -5,11 +5,9 @@ import argparse
 import sys
 import json
 import cv2
-import object_detection.object_detection as obj_detect
+import object_detection as obj_detect
 import numpy as np
 import tempfile
-import object_detection.utils.visualization_utils as vis_utils
-import object_detection.utils.label_map_util as label_utils
 from datetime import datetime as dt
 import platform
 
@@ -120,67 +118,29 @@ def detect_video_stream(args):
     if args.dryrun:
         sys.stdout.writelines(json.dumps(args.__dict__))
         return
-    # generate dict from labels
-    category_index = label_utils.create_category_index_from_labelmap(args.path_to_label_map, use_display_name=True)
-    # logging.debug(f"category_index: {category_index}")
     # TODO validate args
     detection_graph = obj_detect.load_frozen_model_into_memory(args.path_to_frozen_graph)
     # determine sample rate
     sample_rate = determine_samplerate(args.samplerate)
-    # logging.debug(f"using sample_rate {sample_rate}")
-    # loop over frames in video
     # adapted from https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
     cap = determine_source(args, cv2.VideoCapture)
     # TODO accept a switch that will change from video output to text output
-
-    # START - move to visualization service
-
-    # output_video_file_path = tempfile.NamedTemporaryFile(suffix='.avi', delete=False).name
-    # logging.info(f'writing output video to {output_video_file_path}')
-
-    # video_out = cv2.VideoWriter(output_video_file_path,
-    #                             fourcc=cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'),
-    #                             apiPreference=cv2.CAP_ANY,
-    #                             fps=10,
-    #                             frameSize=(int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))))
-    # END - move to visualization service
 
     frame_count = 0
     start_time = dt.now().timestamp()
     cut_off_score = determine_cut_off_score(args)
     logging.debug(f"using a cut off score of {cut_off_score}")
+    # loop over frames in video
     while cap.isOpened():
         ret, frame = cap.read()
-        ##logging.debug(f"read status is {ret}")
         # only consider frames that are a multiple of the sample rate
         if frame_count % sample_rate == 0:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img_to_array = np.expand_dims(frame, axis=0)
-            # image = object_detection.load_image_into_numpy_array(img_to_array)
             # run inference
             output_dict = obj_detect.run_inference_for_single_image(img_to_array, detection_graph)
             # TODO filter for classes, cut off score
             output_dict = filter_detection_output(output_dict, cut_off_score)
-            # TODO implement with switch from args - write output dict to stdout
-            #
-            # OR write image to video out
-            # credit - https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
-
-            # START - move to visualization service - and change to image output
-
-            # vis_utils.visualize_boxes_and_labels_on_image_array(
-            #     frame,
-            #     output_dict['detection_boxes'],
-            #     output_dict['detection_classes'],
-            #     output_dict['detection_scores'],
-            #     category_index,
-            #     instance_masks=output_dict.get('detection_masks'),
-            #     use_normalized_coordinates=True,
-            #     line_thickness=10)
-            # output_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-            # video_out.write(output_rgb)
-
-            # END move to visualization service
             if len(output_dict['detection_boxes']) > 0:
                 sys.stdout.writelines(str({'start_time': start_time,'output_dict':output_dict,
                     'name': determine_instance_name(args.instance_name), 'frame': frame,
