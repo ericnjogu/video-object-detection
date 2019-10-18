@@ -1,0 +1,33 @@
+syntax = 'proto3';
+
+/*
+ use package name in message types imported from tensor - credit https://stackoverflow.com/a/41150940/315385
+ e.g. tensorflow.TensorProto instead of just TensorProto
+ */
+import "tensorflow/core/framework/tensor.proto";
+
+
+/*
+compile with:
+ (object-detection) mugo@eric-aspire:~/ai-object-detection/video-tracking/proto/generated$ python -m grpc_tools.protoc -I ../ --grpc_python_out=. --python_out=. ../detection_handler.proto
+*/
+
+service DetectionHandler {
+  /*
+    handle a detection output
+  */
+  rpc handle_detection(handle_detection_request) returns(handle_detection_response){}
+}
+
+message handle_detection_request {
+  string instance_name = 1;
+  string source = 2;
+  float start_timestamp = 3;
+  int64 frame_count = 4;
+  map <string, tensorflow.TensorProto> detection_output = 5;
+  tensorflow.TensorProto frame = 6;
+}
+
+message handle_detection_response {
+  bool status = 1;
+}
