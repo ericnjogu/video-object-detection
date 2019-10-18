@@ -11,6 +11,7 @@ class StdoutDetectionHandler(detection_handler_pb2_grpc.DetectionHandlerServicer
       handle a detection output
       """
       sys.stdout.writelines(str(request))
+      return detection_handler_pb2.handle_detection_response(status=True)
 
 # credit - https://www.semantics3.com/blog/a-simplified-guide-to-grpc-in-python-6c4e25f0c506/
 # create server
