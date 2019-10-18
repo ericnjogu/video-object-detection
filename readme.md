@@ -16,6 +16,7 @@ To (re)generate the client, server grpc code, follow the steps below.
 ## Resources
 - <https://towardsdatascience.com/detecting-pikachu-in-videos-using-tensorflow-object-detection-cd872ac42c1d>
 - <https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb>
+- https://www.semantics3.com/blog/a-simplified-guide-to-grpc-in-python-6c4e25f0c506/
 - other credits are given in code and commit comments
 
 ## Licensing
