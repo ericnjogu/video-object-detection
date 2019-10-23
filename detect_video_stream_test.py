@@ -2,7 +2,7 @@ import subprocess
 import logging
 import sys
 import json
-import detect_video_stream
+import detect_video_stream, detect_video_stream_utils
 import unittest.mock as mock
 import tempfile
 import ast
@@ -34,13 +34,13 @@ def test_optional_args():
     assert args['instance_name'] == "acer-ubuntu-18", "name differs"
 
 def test_determine_samplerate_no_input():
-    sample_rate = detect_video_stream.determine_samplerate({})
+    sample_rate = detect_video_stream_utils.determine_samplerate({}, detect_video_stream.SAMPLE_RATE)
     assert sample_rate == detect_video_stream.SAMPLE_RATE, "when sample rate is not specified, use default"
 
 def test_determine_samplerate_with_input():
     args = mock.Mock()
     args.samplerate = 15
-    sample_rate = detect_video_stream.determine_samplerate(args)
+    sample_rate = detect_video_stream_utils.determine_samplerate(args, detect_video_stream.SAMPLE_RATE)
     assert sample_rate == 15, "when sample rate is specified, use it"
 
 def test_determine_source_hyphen():
@@ -48,7 +48,7 @@ def test_determine_source_hyphen():
     args.source = '-'
 
     video_reader = mock.Mock().callable()
-    src = detect_video_stream.determine_source(args, video_reader)
+    src = detect_video_stream_utils.determine_source(args, video_reader)
 
     video_reader.assert_called_once()
     video_reader.assert_called_with(sys.stdin)
@@ -57,7 +57,7 @@ def test_determine_source_webcam_device_number():
     args = mock.Mock()
     args.source = '2'
     video_reader = mock.Mock().callable()
-    src = detect_video_stream.determine_source(args, video_reader)
+    src = detect_video_stream_utils.determine_source(args, video_reader)
     video_reader.assert_called_once()
     video_reader.assert_called_with('2')
 
@@ -66,27 +66,27 @@ def test_determine_source_url():
     url = tempfile.NamedTemporaryFile(delete=False).name
     args.source = url
     video_reader = mock.Mock().callable()
-    src = detect_video_stream.determine_source(args, video_reader)
+    src = detect_video_stream_utils.determine_source(args, video_reader)
     video_reader.assert_called_once()
     video_reader.assert_called_with(url)
 
 def test_determine_cut_off_score_absent_in_args():
     # simulate args not having the optional arg
     args = {}
-    cut_off_score = detect_video_stream.determine_cut_off_score(args)
+    cut_off_score = detect_video_stream_utils.determine_cut_off_score(args, default_cut_off = detect_video_stream.CUT_OFF_SCORE)
     assert cut_off_score == detect_video_stream.CUT_OFF_SCORE, "cut off score differs from default value"
 
 def test_determine_cut_off_score_none():
     # Attribute error is not being thrown when the optional arg is not present, instead None is returned
     args = mock.Mock()
     args.cutoff = None
-    cut_off_score = detect_video_stream.determine_cut_off_score(args)
+    cut_off_score = detect_video_stream_utils.determine_cut_off_score(args, default_cut_off = detect_video_stream.CUT_OFF_SCORE)
     assert cut_off_score == detect_video_stream.CUT_OFF_SCORE, "cut off score differs from default value"
 
 def test_determine_cut_off_score_present_in_args():
     args = mock.Mock()
     args.cutoff = '51'
-    cut_off_score = detect_video_stream.determine_cut_off_score(args)
+    cut_off_score = detect_video_stream_utils.determine_cut_off_score(args, default_cut_off = detect_video_stream.CUT_OFF_SCORE)
     assert cut_off_score == .51, "cut off score differs from provided value"
 
 def test_filter_detection_output_from_file(setup_logging):
@@ -94,7 +94,7 @@ def test_filter_detection_output_from_file(setup_logging):
     with open('samples/output_dict_01.txt', 'r') as f:
         text = f.read()
         output_dict = eval(text)
-        result = detect_video_stream.filter_detection_output(output_dict, .14)
+        result = detect_video_stream_utils.filter_detection_output(output_dict, .14)
         assert result is not None
         # logging.debug(f"test_filter_detection_output: {result}")
         assert len(result['detection_scores']) == 1
@@ -106,7 +106,7 @@ def test_filter_detection_output_from_dict(setup_logging):
     output_dict = {'detection_scores':[.23, .66, .85], 'detection_classes':[11, 2, 31], 'detection_boxes': [[0.5740724 , 0.28274727, 0.6627937 , 0.40734732],
            [0.5740724 , 0.28274727, 0.6627937 , 0.40734732],
            [0.56495595, 0.25473273, 0.6740638 , 0.43713987]]}
-    result = detect_video_stream.filter_detection_output(output_dict, .8)
+    result = detect_video_stream_utils.filter_detection_output(output_dict, .8)
     assert result is not None
     #logging.debug(f"test_filter_detection_output: {result}")
     assert len(result['detection_scores']) == 1
@@ -115,18 +115,18 @@ def test_filter_detection_output_from_dict(setup_logging):
     assert result['detection_classes'][0] == 31
 
 def test_determine_source_name_hyphen():
-    assert "standard input" == detect_video_stream.determine_source_name('-')
+    assert "standard input" == detect_video_stream_utils.determine_source_name('-')
 
 def test_determine_source_name_webcam_device_number():
-    assert "device 2" == detect_video_stream.determine_source_name('2')
+    assert "device 2" == detect_video_stream_utils.determine_source_name('2')
 
 def test_determine_source_name_url():
     url = tempfile.NamedTemporaryFile(delete=False, suffix='.avi').name
-    assert url == detect_video_stream.determine_source_name(url)
+    assert url == detect_video_stream_utils.determine_source_name(url)
 
 def test_determine_instance_name_not_provided():
-    assert platform.uname().node == detect_video_stream.determine_instance_name(None)
+    assert platform.uname().node == detect_video_stream_utils.determine_instance_name(None)
 
 def test_determine_instance_name_provided():
     name = "backyard"
-    assert name == detect_video_stream.determine_instance_name(name)
+    assert name == detect_video_stream_utils.determine_instance_name(name)
