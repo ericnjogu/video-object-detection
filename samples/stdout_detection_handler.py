@@ -2,6 +2,7 @@ import grpc
 import sys
 import time
 from concurrent import futures
+import logging
 
 from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
 
@@ -20,7 +21,8 @@ server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 detection_handler_pb2_grpc.add_DetectionHandlerServicer_to_server(StdoutDetectionHandler(), server);
 # listen
 port  = 50051
-print (f'starting server on port {port}')
+logging.getLogger().setLevel(logging.DEBUG)
+logging.info(f'starting server on port {port}')
 server.add_insecure_port(f'[::]:{port}')
 server.start()
 # sleep loop
