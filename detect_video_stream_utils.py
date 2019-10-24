@@ -2,9 +2,16 @@ import os
 import platform
 import sys
 
+def determine_input_arg(args, arg_name, default_arg_val):
+    try:
+        """ check for arg_name in args, if absent return default_arg_val """
+        return getattr(args, arg_name)
+    except AttributeError:
+        return default_arg_val
+
 def determine_handler_port(args, default_handler_port):
-    #TODO - consider reusing determine_samplerate
-    pass
+    """ check for handler port in args, if absent return default_handler_port """
+    return determine_input_arg(args, 'handler_port', default_handler_port)
 
 def determine_instance_name(instance_name):
     """
@@ -79,11 +86,8 @@ def determine_cut_off_score(args, default_cut_off):
         return default_cut_off
 
 def determine_samplerate(args, default_sample_rate):
-    try:
-        """ check for sample rate in args, if absent return default """
-        return args.samplerate
-    except AttributeError:
-        return default_sample_rate
+    """ check for sample rate in args, if absent return default """
+    return determine_input_arg(args, "samplerate", default_sample_rate)
 
 def determine_source(args, video_reader):
     """
