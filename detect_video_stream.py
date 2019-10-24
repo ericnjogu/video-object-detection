@@ -55,9 +55,6 @@ def detect_video_stream(args):
             output_dict = obj_detect.run_inference_for_single_image(img_to_array, detection_graph)
             # filter for cut off score
             output_dict = detect_video_stream_utils.filter_detection_output(output_dict, cut_off_score)
-            # TODO
-            # convert the output dict entries into float_array - could handle the one dim separately in comprehension
-            # investigate how we can call float_array on each element in a numpy array - at a certain level without deep (for arrays only)
             if len(output_dict['detection_boxes']) > 0:
                 # convert to numpy array so that we can flatten, retrieve shape
                 output_dict['detection_boxes'] = np.array(output_dict['detection_boxes'])
