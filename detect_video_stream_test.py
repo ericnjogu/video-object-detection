@@ -34,14 +34,13 @@ def test_optional_args():
     assert args['instance_name'] == "acer-ubuntu-18", "name differs"
 
 def test_determine_samplerate_no_input():
-    sample_rate = detect_video_stream_utils.determine_samplerate({}, detect_video_stream.SAMPLE_RATE)
+    sample_rate = detect_video_stream_utils.determine_samplerate(None, detect_video_stream.SAMPLE_RATE)
     assert sample_rate == detect_video_stream.SAMPLE_RATE, "when sample rate is not specified, use default"
 
 def test_determine_samplerate_with_input():
-    args = mock.Mock()
-    args.samplerate = 15
-    sample_rate = detect_video_stream_utils.determine_samplerate(args, detect_video_stream.SAMPLE_RATE)
-    assert sample_rate == 15, "when sample rate is specified, use it"
+    samplerate = 15
+    sample_rate_result = detect_video_stream_utils.determine_samplerate(samplerate, detect_video_stream.SAMPLE_RATE)
+    assert sample_rate_result == samplerate, "when sample rate is specified, use it"
 
 def test_determine_source_hyphen():
     args = mock.Mock()
@@ -131,12 +130,11 @@ def test_determine_instance_name_provided():
     name = "backyard"
     assert name == detect_video_stream_utils.determine_instance_name(name)
 
-def test_determine_handler_port():
-    handler_port = detect_video_stream_utils.determine_handler_port({}, detect_video_stream.HANDLER_PORT)
+def test_determine_handler_port_not_provided():
+    handler_port = detect_video_stream_utils.determine_handler_port(None, detect_video_stream.HANDLER_PORT)
     assert handler_port == detect_video_stream.HANDLER_PORT, "when handler port is not specified, use default"
 
 def test_determine_handler_port_with_input():
-    args = mock.Mock()
-    args.handler_port = 50000
-    handler_port = detect_video_stream_utils.determine_handler_port(args, detect_video_stream.HANDLER_PORT)
-    assert handler_port == 50000, "when handler port is specified, use it"
+    handler_port = 50000
+    handler_port_result = detect_video_stream_utils.determine_handler_port(handler_port, detect_video_stream.HANDLER_PORT)
+    assert handler_port_result == 50000, "when handler port is specified, use it"

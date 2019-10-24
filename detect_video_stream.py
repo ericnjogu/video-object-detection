@@ -25,8 +25,10 @@ HANDLER_PORT = 50051
 def detect_video_stream(args):
     """ detect objects in video stream """
     # setup grpc comms
-    handler_port = detect_video_stream_utils.determine_handler_port(args, HANDLER_PORT)
-    channel = grpc.insecure_channel(f'localhost:{handler_port}')
+    handler_port = detect_video_stream_utils.determine_handler_port(args.handler_port, HANDLER_PORT)
+    url = f'localhost:{handler_port}'
+    logging.debug(f'connecting to handle at {url}')
+    channel = grpc.insecure_channel(url)
     stub = detection_handler_pb2_grpc.DetectionHandlerStub(channel)
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385
     if args.dryrun:
@@ -57,14 +59,16 @@ def detect_video_stream(args):
             # convert the output dict entries into float_array - could handle the one dim separately in comprehension
             # investigate how we can call float_array on each element in a numpy array - at a certain level without deep (for arrays only)
             if len(output_dict['detection_boxes']) > 0:
-                output_dict['detection_boxes'] = [detection_handler_pb2.float_array(numbers=array) for array in output_dict['detection_boxes']]
+                # convert to numpy array so that we can flatten, retrieve shape
+                output_dict['detection_boxes'] = np.array(output_dict['detection_boxes'])
+                detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(), shape=output_dict['detection_boxes'].shape)
                 message = detection_handler_pb2.handle_detection_request(
                             start_timestamp = start_time,
                             detection_classes = output_dict['detection_classes'],
                             detection_scores = output_dict['detection_scores'],
-                            detection_boxes = output_dict['detection_boxes'],
+                            detection_boxes = detection_boxes,
                             instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name),
-                            frame = [detection_handler_pb2.float_array(numbers=array) for array in frame[0]],
+                            frame = detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
                             frame_count = frame_count,
                             source = detect_video_stream_utils.determine_source_name(args.source))
                 response = stub.handle_detection(message)
