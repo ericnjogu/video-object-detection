@@ -130,3 +130,13 @@ def test_determine_instance_name_not_provided():
 def test_determine_instance_name_provided():
     name = "backyard"
     assert name == detect_video_stream_utils.determine_instance_name(name)
+
+def test_determine_handler_port():
+    handler_port = detect_video_stream_utils.determine_handler_port({}, detect_video_stream.HANDLER_PORT)
+    assert handler_port == detect_video_stream.HANDLER_PORT, "when handler port is not specified, use default"
+
+def test_determine_handler_port_with_input():
+    args = mock.Mock()
+    args.handler_port = 50000
+    handler_port = detect_video_stream_utils.determine_handler_port(args, detect_video_stream.HANDLER_PORT)
+    assert handler_port == 50000, "when handler port is specified, use it"

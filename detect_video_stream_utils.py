@@ -2,6 +2,10 @@ import os
 import platform
 import sys
 
+def determine_handler_port(args, default_handler_port):
+    #TODO - consider reusing determine_samplerate
+    pass
+
 def determine_instance_name(instance_name):
     """
     parameters:
