@@ -18,6 +18,7 @@ plus a shape that can be used in reshape() on the client
 */
 message float_array {
   repeated float numbers = 1;
+  repeated int32 shape = 2;
 }
 
 message handle_detection_request {
@@ -27,8 +28,8 @@ message handle_detection_request {
   int64 frame_count = 4;
   repeated float detection_scores = 5;
   repeated int32 detection_classes = 6;
-  repeated float_array detection_boxes = 7;
-  repeated float_array frame = 8;
+  float_array detection_boxes = 7;
+  float_array frame = 8;
 }
 
 message handle_detection_response {
