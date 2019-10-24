@@ -25,7 +25,8 @@ HANDLER_PORT = 50051
 def detect_video_stream(args):
     """ detect objects in video stream """
     # setup grpc comms
-    channel = grpc.insecure_channel(f'localhost:{HANDLER_PORT}')
+    handler_port = detect_video_stream_utils.determine_handler_port(args, HANDLER_PORT)
+    channel = grpc.insecure_channel(f'localhost:{handler_port}')
     stub = detection_handler_pb2_grpc.DetectionHandlerStub(channel)
     # __dict__ trick from https://stackoverflow.com/a/3768975/315385
     if args.dryrun:
@@ -89,5 +90,6 @@ if __name__ == "__main__":
             help="space separated list of object classes to detect as specified in label mapping")
     parser.add_argument("--samplerate", help="how often to retrieve video frames for object detection")
     parser.add_argument("--instance_name", help="a descriptive name for this detection instance e.g. hostname")
+    parser.add_argument("--handler_port", help="the port to grpc detection results to")
     args = parser.parse_args()
     detect_video_stream(args)
