@@ -18,6 +18,8 @@ def test_create_handle_detection_request():
                                             [0.345639  , 0.69829893, 0.38075703, 0.7310691 ]])}
     detection_boxes = detection_handler_pb2.float_array(numbers=detection_output['detection_boxes'].ravel(),
                                                         shape=detection_output['detection_boxes'].shape)
+    string_map={'color':'blue', 'music':'classical'}
+    float_map={'weight':56.9, 'height':85.4}
     # logging.debug(f"detection_boxes: {detection_boxes}")
     msg = detection_handler_pb2.handle_detection_request(
                 start_timestamp = datetime.datetime.now().timestamp(),
@@ -27,7 +29,9 @@ def test_create_handle_detection_request():
                 instance_name = "testing",
                 frame = detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
                 frame_count = 1619,
-                source = "steam")
+                source = "steam",
+                string_map=string_map,
+                float_map=float_map)
     assert len(msg.frame.numbers) == 9
     assert msg.frame.shape == [1, 3, 3]
 
@@ -35,6 +39,9 @@ def test_create_handle_detection_request():
     assert msg.detection_boxes.shape == [2, 4]
     ndarray = numpy.array(msg.detection_boxes.numbers).reshape(msg.detection_boxes.shape)
     logging.debug(ndarray)
+
+    assert msg.string_map == string_map
+    assert msg.float_map == string_map
 
 
 
