@@ -39,6 +39,7 @@ def detect_video_stream(args):
     # determine sample rate
     sample_rate = detect_video_stream_utils.determine_samplerate(args.samplerate, SAMPLE_RATE)
     cap = detect_video_stream_utils.determine_source(args, cv2.VideoCapture)
+    float_map = {'frame_height':cap.get(cv2.CAP_PROP_FRAME_HEIGHT), 'frame_width':cap.get(cv2.CAP_PROP_FRAME_WIDTH)}
     frame_count = 0
     start_time = dt.now().timestamp()
     cut_off_score = detect_video_stream_utils.determine_cut_off_score(args, default_cut_off=CUT_OFF_SCORE)
@@ -67,7 +68,8 @@ def detect_video_stream(args):
                             instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name),
                             frame = detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
                             frame_count = frame_count,
-                            source = detect_video_stream_utils.determine_source_name(args.source))
+                            source = detect_video_stream_utils.determine_source_name(args.source),
+                            float_map=float_map)
                 response = stub.handle_detection(message)
                 logging.debug(f"detection handler response is {response.status}")
             else:
