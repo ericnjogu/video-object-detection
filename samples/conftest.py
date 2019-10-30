@@ -3,6 +3,7 @@ import numpy
 from proto.generated import detection_handler_pb2
 import datetime
 
+
 @pytest.fixture
 def create_handle_detection_request():
     """
