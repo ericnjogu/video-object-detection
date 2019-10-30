@@ -8,8 +8,7 @@ It is possible to transmit the results of a detection to a detection handling se
 
 To (re)generate the client, server grpc code, follow the steps below.
 
-* cd to `proto/generated`
-* Generate the code - `python -m grpc_tools.protoc -I ../ --grpc_python_out=. --python_out=. ../detection_handler.proto`
+* Generate the code - `python -m grpc_tools.protoc -I proto --grpc_python_out=proto/generated/ --python_out=proto/generated/proto/detection_handler.proto`
 
 ## Running
 - Download or clone the [tensorflow core repo](https://github.com/tensorflow/tensorflow). This will make available several models that can be used to run inferences.
