@@ -13,12 +13,12 @@ def test_create_handle_detection_request(create_handle_detection_request):
     Tests that the input data is serialized okay into the protobuf types without errors
     Receives a fixture function defined in conftest.py which is loaded by pytest
     """
-    msg, string_map, float_map = create_handle_detection_request
+    msg, string_map, float_map, category_index = create_handle_detection_request
     assert len(msg.frame.numbers) == 9
     assert msg.frame.shape == [1, 3, 3]
 
-    assert len(msg.detection_boxes.numbers) == 8
-    assert msg.detection_boxes.shape == [2, 4]
+    assert len(msg.detection_boxes.numbers) == 4
+    assert msg.detection_boxes.shape == [1, 4]
     ndarray = numpy.array(msg.detection_boxes.numbers).reshape(msg.detection_boxes.shape)
     logging.debug(ndarray)
 
