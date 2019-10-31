@@ -46,7 +46,7 @@ def detect_video_stream(args):
     while cap.isOpened():
         ret, frame = cap.read()
         # only consider frames that are a multiple of the sample rate
-        if frame_count % sample_rate == 0:
+        if frame is not None and frame_count % sample_rate == 0:
             frame_bgr2rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img_to_array = np.expand_dims(frame_bgr2rgb, axis=0)
             # run inference
