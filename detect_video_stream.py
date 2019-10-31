@@ -19,9 +19,6 @@ CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5
 HANDLER_PORT = 50051
 
-# TODO
-# introduce a determine_port method
-
 def detect_video_stream(args):
     """ detect objects in video stream """
     # setup grpc comms

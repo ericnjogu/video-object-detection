@@ -12,10 +12,6 @@ service DetectionHandler {
   rpc handle_detection(handle_detection_request) returns(handle_detection_response){}
 }
 
-/* TODO
-create a message that will hold an array that is reduced to one row, x cols,
-plus a shape that can be used in reshape() on the client
-*/
 message float_array {
   repeated float numbers = 1;
   repeated int32 shape = 2;
@@ -31,7 +27,7 @@ message handle_detection_request {
   float_array detection_boxes = 7;
   float_array frame = 8;
   map <string, string> string_map = 9;
-  map <string, float> float_map = 10;  
+  map <string, float> float_map = 10;
 }
 
 message handle_detection_response {
