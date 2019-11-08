@@ -1,14 +1,12 @@
 # imports
 import logging
-import os
 import argparse
 import sys
 import json
 import cv2
 import numpy as np
-import tempfile
+import object_detection.utils.label_map_util as label_utils
 from datetime import datetime as dt
-import platform
 import grpc
 
 from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
@@ -31,6 +29,9 @@ def detect_video_stream(args):
     if args.dryrun:
         sys.stdout.writelines(json.dumps(args.__dict__))
         return
+    # generate dict from labels
+    category_index = label_utils.create_category_index_from_labelmap(args.path_to_label_map, use_display_name=True)
+    # logging.debug(f"category_index: {category_index}")
     # TODO validate args
     detection_graph = obj_detect.load_frozen_model_into_memory(args.path_to_frozen_graph)
     # determine sample rate
@@ -66,7 +67,8 @@ def detect_video_stream(args):
                             frame = detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
                             frame_count = frame_count,
                             source = detect_video_stream_utils.determine_source_name(args.source),
-                            float_map=float_map)
+                            float_map=float_map,
+                            category_index={k:v['name'] for k, v in category_index.items()})
                 response = stub.handle_detection(message)
                 logging.debug(f"detection handler response is {response.status}")
             else:
@@ -83,6 +85,7 @@ if __name__ == "__main__":
     # credit for adding required arg - https://stackoverflow.com/a/24181138/315385
     parser.add_argument("source", help="- for standard input, path to file or a numeral that represents the webcam device number")
     parser.add_argument("path_to_frozen_graph", help="path to frozen model graph")
+    parser.add_argument("path_to_label_map", help="path to label map")
     parser.add_argument("--cutoff", help="cut off detection score (%%), a value between 1 and 100")
     parser.add_argument("--dryrun", help="echo a params as json object, don't process anything", action="store_true")
     parser.add_argument("--classes",

@@ -16,12 +16,12 @@ def setup_logging():
 
 def test_required_args():
     """ running file without path to label map parameter should show error and return non-zero status"""
-    result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.pb", "--dryrun"])
+    result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.pb", "/path/to/label-map.txt", "--dryrun"])
     assert result.returncode == 0, "there should be no errors, all positional args are present"
 
 def test_optional_args():
     """ test that optional args are correctly received """
-    result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.ext", "--cutoff", "88",
+    result = subprocess.run(["python", "./detect_video_stream.py", "-", "/tmp/graph.ext", "/path/to/label-map.txt", "--cutoff", "88",
                     "--dryrun", "--classes", "1 5 8 34", "--samplerate", "10", "--instance_name", "acer-ubuntu-18"], stdout=subprocess.PIPE)
     assert result.stderr is None
     assert result.returncode == 0, "there should be no error return code"

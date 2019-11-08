@@ -20,7 +20,7 @@ To (re)generate the client, server grpc code, follow the steps below.
   `python samples/stdout_detection_handler.py`
 - Attempt to detect objects in a video. This example uses the ssd_mobilenet_v1_coco_2017_11_17 model in the downloaded tensorflow repo
 
-  `python detect_video_stream.py ~/Videos/train-passenger-foot-stuck.mp4 ~/tensorflow-models-repo/research/object_detection/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb --cutoff 70`
+  `python detect_video_stream.py ~/Videos/train-passenger-foot-stuck.mp4 ~/tensorflow-models-repo/research/object_detection/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt --cutoff 70`
 
 
 ## Resources
