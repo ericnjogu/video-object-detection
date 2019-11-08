@@ -138,3 +138,15 @@ def test_determine_handler_port_with_input():
     handler_port = 50000
     handler_port_result = detect_video_stream_utils.determine_handler_port(handler_port, detect_video_stream.HANDLER_PORT)
     assert handler_port_result == 50000, "when handler port is specified, use it"
+
+def test_class_names_from_index_01():
+    classes=[1, 1]
+    category_index = {1: {'id': 1, 'name': 'car'}, 2: {'id': 2, 'name': 'pedestrian'}}
+    result = detect_video_stream_utils.class_names_from_index(classes, category_index)
+    assert result == {1: 'car'}
+
+def test_class_names_from_index_02():
+    classes = [1, 1, 2, 2, 1]
+    category_index = {1: {'id': 1, 'name': 'car'}, 2: {'id': 2, 'name': 'pedestrian'}}
+    result = detect_video_stream_utils.class_names_from_index(classes, category_index)
+    assert result == {1: 'car', 2: 'pedestrian'}

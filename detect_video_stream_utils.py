@@ -107,3 +107,12 @@ def determine_source(args, video_reader):
         return video_reader(args.source)
     elif os.path.exists(args.source):
         return video_reader(args.source)
+
+def class_names_from_index(classes, category_index):
+    """
+    :param classes: a list of detected classes e.g. [1, 1]
+    :param category_index: the category index dict e.g. {1: {'id': 1, 'name': 'car'}, 2: {'id': 2, 'name': 'pedestrian'}}
+    :return: a dict of {class_id:class_name} e.g. {1:'car'}
+    """
+    return {k: category_index[k]['name'] for k in classes}
+

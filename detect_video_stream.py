@@ -58,6 +58,7 @@ def detect_video_stream(args):
                 # convert to numpy array so that we can flatten, retrieve shape
                 output_dict['detection_boxes'] = np.array(output_dict['detection_boxes'])
                 detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(), shape=output_dict['detection_boxes'].shape)
+                filtered_category_index = detect_video_stream_utils.class_names_from_index(output_dict['detection_classes'], category_index)
                 message = detection_handler_pb2.handle_detection_request(
                             start_timestamp = start_time,
                             detection_classes = output_dict['detection_classes'],
@@ -68,7 +69,7 @@ def detect_video_stream(args):
                             frame_count = frame_count,
                             source = detect_video_stream_utils.determine_source_name(args.source),
                             float_map=float_map,
-                            category_index={k:v['name'] for k, v in category_index.items()})
+                            category_index=filtered_category_index)
                 response = stub.handle_detection(message)
                 logging.debug(f"detection handler response is {response.status}")
             else:
