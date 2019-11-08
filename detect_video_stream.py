@@ -17,6 +17,7 @@ CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5
 HANDLER_PORT = 50051
 
+
 def detect_video_stream(args):
     """ detect objects in video stream """
     # setup grpc comms
@@ -37,7 +38,7 @@ def detect_video_stream(args):
     # determine sample rate
     sample_rate = detect_video_stream_utils.determine_samplerate(args.samplerate, SAMPLE_RATE)
     cap = detect_video_stream_utils.determine_source(args, cv2.VideoCapture)
-    float_map = {'frame_height':cap.get(cv2.CAP_PROP_FRAME_HEIGHT), 'frame_width':cap.get(cv2.CAP_PROP_FRAME_WIDTH)}
+    float_map = {'frame_height': cap.get(cv2.CAP_PROP_FRAME_HEIGHT), 'frame_width': cap.get(cv2.CAP_PROP_FRAME_WIDTH)}
     frame_count = 0
     start_time = dt.now().timestamp()
     cut_off_score = detect_video_stream_utils.determine_cut_off_score(args, default_cut_off=CUT_OFF_SCORE)
@@ -57,19 +58,21 @@ def detect_video_stream(args):
             if len(output_dict['detection_boxes']) > 0:
                 # convert to numpy array so that we can flatten, retrieve shape
                 output_dict['detection_boxes'] = np.array(output_dict['detection_boxes'])
-                detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(), shape=output_dict['detection_boxes'].shape)
-                filtered_category_index = detect_video_stream_utils.class_names_from_index(output_dict['detection_classes'], category_index)
+                detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(),
+                                                                    shape=output_dict['detection_boxes'].shape)
+                filtered_category_index = detect_video_stream_utils.class_names_from_index(
+                    output_dict['detection_classes'], category_index)
                 message = detection_handler_pb2.handle_detection_request(
-                            start_timestamp = start_time,
-                            detection_classes = output_dict['detection_classes'],
-                            detection_scores = output_dict['detection_scores'],
-                            detection_boxes = detection_boxes,
-                            instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name),
-                            frame = detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
-                            frame_count = frame_count,
-                            source = detect_video_stream_utils.determine_source_name(args.source),
-                            float_map=float_map,
-                            category_index=filtered_category_index)
+                    start_timestamp=start_time,
+                    detection_classes=output_dict['detection_classes'],
+                    detection_scores=output_dict['detection_scores'],
+                    detection_boxes=detection_boxes,
+                    instance_name=detect_video_stream_utils.determine_instance_name(args.instance_name),
+                    frame=detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
+                    frame_count=frame_count,
+                    source=detect_video_stream_utils.determine_source_name(args.source),
+                    float_map=float_map,
+                    category_index=filtered_category_index)
                 response = stub.handle_detection(message)
                 logging.debug(f"detection handler response is {response.status}")
             else:
@@ -78,17 +81,19 @@ def detect_video_stream(args):
         frame_count += 1
     cap.release()
 
+
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
     parser = argparse.ArgumentParser(description="detect objects in video")
     # credit for adding required arg - https://stackoverflow.com/a/24181138/315385
-    parser.add_argument("source", help="- for standard input, path to file or a numeral that represents the webcam device number")
+    parser.add_argument("source",
+                        help="- for standard input, path to file or a numeral that represents the webcam device number")
     parser.add_argument("path_to_frozen_graph", help="path to frozen model graph")
     parser.add_argument("path_to_label_map", help="path to label map")
     parser.add_argument("--cutoff", help="cut off detection score (%%), a value between 1 and 100")
     parser.add_argument("--dryrun", help="echo a params as json object, don't process anything", action="store_true")
     parser.add_argument("--classes",
-            help="space separated list of object classes to detect as specified in label mapping")
+                        help="space separated list of object classes to detect as specified in label mapping")
     parser.add_argument("--samplerate", help="how often to retrieve video frames for object detection")
     parser.add_argument("--instance_name", help="a descriptive name for this detection instance e.g. hostname")
     parser.add_argument("--handler_port", help="the port to grpc detection results to")

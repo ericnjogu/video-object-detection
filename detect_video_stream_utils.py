@@ -2,6 +2,7 @@ import os
 import platform
 import sys
 
+
 def determine_input_arg(arg_val, default_arg_val):
     """ if arg_val exists, use it, else return default_arg_val """
     if arg_val:
@@ -9,9 +10,11 @@ def determine_input_arg(arg_val, default_arg_val):
     else:
         return default_arg_val
 
+
 def determine_handler_port(handler_port_arg, default_handler_port):
     """ if handler_port_arg exists, use it, else return default_handler_port """
     return determine_input_arg(handler_port_arg, default_handler_port)
+
 
 def determine_instance_name(instance_name):
     """
@@ -24,6 +27,7 @@ def determine_instance_name(instance_name):
         return instance_name
     else:
         return platform.uname().node
+
 
 def determine_source_name(src):
     """
@@ -41,6 +45,7 @@ def determine_source_name(src):
         return f"device {src}"
     elif os.path.exists(src):
         return src
+
 
 def filter_detection_output(detection_output_dict, cut_off_score):
     """
@@ -68,6 +73,7 @@ def filter_detection_output(detection_output_dict, cut_off_score):
 
     return result
 
+
 def determine_cut_off_score(args, default_cut_off):
     """
     check for cut_off_score in args, if absent return default
@@ -85,9 +91,11 @@ def determine_cut_off_score(args, default_cut_off):
     except AttributeError:
         return default_cut_off
 
+
 def determine_samplerate(sample_rate_arg, default_sample_rate):
     """ if sample_rate_arg exists, use it, else return default_sample_rate """
     return determine_input_arg(sample_rate_arg, default_sample_rate)
+
 
 def determine_source(args, video_reader):
     """
@@ -107,6 +115,7 @@ def determine_source(args, video_reader):
         return video_reader(args.source)
     elif os.path.exists(args.source):
         return video_reader(args.source)
+
 
 def class_names_from_index(classes, category_index):
     """
