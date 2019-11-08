@@ -6,3 +6,4 @@ pip-selfcheck.json
 pyvenv.cfg
 proto/tensorflow
 proto/generated
+object_detection
