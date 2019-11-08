@@ -10,7 +10,7 @@ from datetime import datetime as dt
 import grpc
 
 from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
-import object_detection as obj_detect
+import video_object_detection as obj_detect
 import detect_video_stream_utils
 
 CUT_OFF_SCORE = 90.0
