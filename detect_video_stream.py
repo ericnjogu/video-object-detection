@@ -75,8 +75,6 @@ def detect_video_stream(args):
                 logging.debug("no score was above cut-off, skipping")
             logging.debug(f"just finished frame: {frame_count}")
         frame_count += 1
-
-    video_out.release()
     cap.release()
 
 if __name__ == "__main__":
