@@ -28,6 +28,7 @@ message handle_detection_request {
   float_array frame = 8;
   map <string, string> string_map = 9;
   map <string, float> float_map = 10;
+  map <int32, string> category_index = 11;
 }
 
 message handle_detection_response {

@@ -26,6 +26,8 @@ def test_create_handle_detection_request(create_handle_detection_request):
     for k, v in msg.float_map.items():
         assert v == pytest.approx(float_map[k])
 
+    assert msg.category_index[8] == 'elephant'
+
 
 
 def test_create_handle_detection_response():

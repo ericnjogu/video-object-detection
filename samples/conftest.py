@@ -29,4 +29,5 @@ def create_handle_detection_request():
                 frame_count = 1619,
                 source = "steam",
                 string_map=string_map,
-                float_map=float_map), string_map, float_map, category_index
+                float_map=float_map,
+                category_index={k:v['name'] for k, v in category_index.items()}), string_map, float_map, category_index
