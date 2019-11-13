@@ -2,8 +2,6 @@ __pycache__
 bin
 lib
 lib64
-pip-selfcheck.json
-pyvenv.cfg
 proto/tensorflow
 proto/generated
 object_detection
