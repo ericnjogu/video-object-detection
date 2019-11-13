@@ -3,6 +3,9 @@ This project aims to detect objects in a video stream then generate data that ca
 
 It comprises of a python script that uses pretrained tensorflow models for out of the box inference.
 
+## Conda Setup
+Run `conda create --name <env> --file package-list-linux-64.txt` to setup a conda environment
+
 ## Handler Service Setup
 It is possible to transmit the results of a detection to a detection handling service for more processing - e.g. visualizing boxes, database storage.
 
