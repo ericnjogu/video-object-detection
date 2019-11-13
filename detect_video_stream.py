@@ -70,7 +70,7 @@ def detect_video_stream(args):
                 #  could be changed to append the start timestamp to the source
                 request_id = detect_video_stream_utils.create_detection_request_id\
                     (instance_name, source, frame_count)
-                string_map = {'id':request_id}
+                string_map = {'id': request_id}
                 message = detection_handler_pb2.handle_detection_request(
                     start_timestamp=start_time,
                     detection_classes=output_dict['detection_classes'],
