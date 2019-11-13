@@ -64,8 +64,12 @@ def detect_video_stream(args):
                     output_dict['detection_classes'], category_index)
                 source = detect_video_stream_utils.determine_source_name(args.source)
                 instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name)
+                # TODO - if someone reruns the same static source (video file), using the same model
+                #  (which could be provided via instance name), we expect the same id for each frame
+                #  for live streams (cameras, network sources), detect_video_stream_utils.determine_source()
+                #  could be changed to append the start timestamp to the source
                 request_id = detect_video_stream_utils.create_detection_request_id\
-                    (instance_name, source, frame_count, start_time)
+                    (instance_name, source, frame_count)
                 string_map = {'id':request_id}
                 message = detection_handler_pb2.handle_detection_request(
                     start_timestamp=start_time,
