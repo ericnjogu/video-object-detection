@@ -5,8 +5,6 @@ import json
 import detect_video_stream, detect_video_stream_utils
 import unittest.mock as mock
 import tempfile
-import ast
-import numpy as np
 import pytest
 import platform
 from datetime import datetime
@@ -108,6 +106,8 @@ def test_determine_cut_off_score_present_in_args():
 
 
 def test_filter_detection_output_from_file(setup_logging):
+    # needed to properly create the numpy arrays in the file being read below during eval()
+    import numpy as np
     # code to read dict from file adapted from https://stackoverflow.com/a/11027069/315385
     with open('samples/output_dict_01.txt', 'r') as f:
         text = f.read()
