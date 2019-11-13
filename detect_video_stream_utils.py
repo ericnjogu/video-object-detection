@@ -1,7 +1,7 @@
 import os
 import platform
 import sys
-
+import hashlib
 
 def determine_input_arg(arg_val, default_arg_val):
     """ if arg_val exists, use it, else return default_arg_val """
@@ -125,3 +125,17 @@ def class_names_from_index(classes, category_index):
     """
     return {k: category_index[k]['name'] for k in classes}
 
+
+def create_detection_request_id(*args):
+    """
+    use several detection request params to create a unique ID
+    possible params
+    :param instance_name: e.g. 'localhost' or <model name>
+    :param source: <video name> or stream id
+    :param frame_count: e.g. 10
+    :param start_timestamp: when the video analysis started
+    :return: a unique ID
+    """
+    # credit https://stackoverflow.com/a/5100431/315385
+    id_str = ''.join(str(x) for x in args)
+    return hashlib.sha256(id_str.encode('utf-8')).hexdigest()

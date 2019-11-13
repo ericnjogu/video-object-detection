@@ -9,6 +9,7 @@ import ast
 import numpy as np
 import pytest
 import platform
+from datetime import datetime
 
 
 @pytest.fixture(scope='function')
@@ -180,3 +181,10 @@ def test_class_names_from_index_02():
     category_index = {1: {'id': 1, 'name': 'car'}, 2: {'id': 2, 'name': 'pedestrian'}}
     result = detect_video_stream_utils.class_names_from_index(classes, category_index)
     assert result == {1: 'car', 2: 'pedestrian'}
+
+
+def test_create_detection_request_id(setup_logging):
+    req_id = detect_video_stream_utils.create_detection_request_id("localhost", "webcam", 958, datetime.now().timestamp())
+    assert isinstance(req_id, str)
+    assert len(req_id) > 0
+    logging.debug(f"id is {req_id}")

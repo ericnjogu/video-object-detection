@@ -62,17 +62,23 @@ def detect_video_stream(args):
                                                                     shape=output_dict['detection_boxes'].shape)
                 filtered_category_index = detect_video_stream_utils.class_names_from_index(
                     output_dict['detection_classes'], category_index)
+                source = detect_video_stream_utils.determine_source_name(args.source)
+                instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name)
+                request_id = detect_video_stream_utils.create_detection_request_id\
+                    (instance_name, source, frame_count, start_time)
+                string_map = {'id':request_id}
                 message = detection_handler_pb2.handle_detection_request(
                     start_timestamp=start_time,
                     detection_classes=output_dict['detection_classes'],
                     detection_scores=output_dict['detection_scores'],
                     detection_boxes=detection_boxes,
-                    instance_name=detect_video_stream_utils.determine_instance_name(args.instance_name),
+                    instance_name=instance_name,
                     frame=detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
                     frame_count=frame_count,
-                    source=detect_video_stream_utils.determine_source_name(args.source),
+                    source=source,
                     float_map=float_map,
-                    category_index=filtered_category_index)
+                    category_index=filtered_category_index,
+                    string_map=string_map)
                 response = stub.handle_detection(message)
                 logging.debug(f"detection handler response is {response.status}")
             else:
