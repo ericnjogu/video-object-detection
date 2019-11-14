@@ -3,6 +3,23 @@ This project aims to detect objects in a video stream then generate data that ca
 
 It comprises of a python script that uses pretrained tensorflow models for out of the box inference.
 
+## Envisioned Architecture
+![Architectural diagram](video-object-detection-arch.jpg "Architectural diagram")
+The system is conceived as micro services which will communicate via publish/subscribe queues. 
+
+A **source** could be a video file, a network stream, a directory of images. 
+The service that reads the source is also aware of the instance name from the configuration. The source creates a message with a unique ID.
+
+The **source** pushes the message into a channel where services that communicate with **model services (models)** receive messages.
+ 
+At the time of pushing the message, a shared counter, say counter <msg-id>-in, with identified by the message ID is created with the total number of **model services**
+ that received the message for processing.
+
+After each **model service** produces some detection results, those results are placed on a publish/subscribe channel where all related results are aggregated.
+The aggregation can be handled by via another shared counter, say counter <msg-id>-out which is incremented by each model service upon receiving the message from the **source**.
+
+Once the two counters are equal, the message is placed on another broadcast channel where other services take the message and deliver it appropriately.
+
 ## Conda Setup
 Run `conda create --name <env> --file package-list-linux-64.txt` to setup a conda environment
 
