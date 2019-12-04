@@ -8,6 +8,10 @@ import tempfile
 import pytest
 import platform
 from datetime import datetime
+from proto.generated.tensorflow_serving.apis import predict_pb2, model_pb2
+import numpy
+import tensorflow as tf
+#from proto.generated.tensorflow.core.framework import tensor_pb2
 
 
 @pytest.fixture(scope='function')
@@ -188,3 +192,10 @@ def test_create_detection_request_id(setup_logging):
     assert isinstance(req_id, str)
     assert len(req_id) > 0
     logging.debug(f"id is {req_id}")
+
+
+def test_create_prediction_request():
+    array = numpy.array([[1,2,3],[4,5,6]])
+    request = predict_pb2.PredictRequest(
+                model_spec=model_pb2.ModelSpec(name='good model'),
+                inputs={'image_tensor:0': tf.make_tensor_proto(array)})
