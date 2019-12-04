@@ -12,13 +12,14 @@ def create_handle_detection_request():
     frame_array1 = [5, 2, 3]
     # not sure why the frame from opencv is nested this way
     frame = numpy.array([[frame_array1, [8.4, 7.9, 5.2], [59, 64, 64]]])
-    detection_output = {'detection_scores': [0.54], 'detection_classes': [8],
+    class_id = 8.0
+    detection_output = {'detection_scores': [0.54], 'detection_classes': [class_id],
                         'detection_boxes': numpy.array([[0.36190858, 0.11737314, 0.94603133, 0.3205647]])}
     detection_boxes = detection_handler_pb2.float_array(numbers=detection_output['detection_boxes'].ravel(),
                                                         shape=detection_output['detection_boxes'].shape)
     string_map = {'color': 'blue', 'music': 'classical'}
     float_map = {'weight': 56.9, 'height': 85.4}
-    category_index = {8: {'name': "elephant"}}
+    category_index = {int(class_id): {'name': "elephant"}}
     return detection_handler_pb2.handle_detection_request(
         start_timestamp=datetime.datetime.now().timestamp(),
         detection_scores=detection_output['detection_scores'],

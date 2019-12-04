@@ -123,7 +123,7 @@ def class_names_from_index(classes, category_index):
     :param category_index: the category index dict e.g. {1: {'id': 1, 'name': 'car'}, 2: {'id': 2, 'name': 'pedestrian'}}
     :return: a dict of {class_id:class_name} e.g. {1:'car'}
     """
-    return {k: category_index[k]['name'] for k in classes}
+    return {int(k): category_index[k]['name'] for k in classes}
 
 
 def create_detection_request_id(*args):

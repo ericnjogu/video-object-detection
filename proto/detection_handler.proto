@@ -23,7 +23,7 @@ message handle_detection_request {
   float start_timestamp = 3;
   int64 frame_count = 4;
   repeated float detection_scores = 5;
-  repeated int32 detection_classes = 6;
+  repeated float detection_classes = 6;
   float_array detection_boxes = 7;
   float_array frame = 8;
   map <string, string> string_map = 9;
