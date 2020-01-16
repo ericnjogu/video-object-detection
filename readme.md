@@ -44,7 +44,17 @@ ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
 
 - [setup](https://www.tensorflow.org/tfx/serving/docker) and start the tensor flow serving docker container
 
-   `sudo docker run -p 8501:8501 -p 8500:8500 --mount type=bind,source=/home/mugo/downloaded-tensorflow-models/ssd_mobilenet_v1_coco_2017_11_17/,target=/models/ssd_mobilenet_v1_coco -e MODEL_NAME=ssd_mobilenet_v1_coco -t tensorflow/serving`
+   First time run:
+
+   `sudo docker run --name ssd_mobilenet_v1_coco -p 8501:8501 -p 8500:8500 --mount type=bind,source=/home/mugo/downloaded-tensorflow-models/ssd_mobilenet_v1_coco_2017_11_17/,target=/models/ssd_mobilenet_v1_coco -e MODEL_NAME=ssd_mobilenet_v1_coco -t tensorflow/serving`
+
+   Every other run:
+
+   `sudo docker start -a ssd_mobilenet_v1_coco`
+
+   Stopping:
+
+   `sudo docker stop ssd_mobilenet_v1_coco`
 
 - Run video detection script
 
