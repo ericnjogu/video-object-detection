@@ -54,7 +54,7 @@ def detect_video_stream(args):
     # loop over frames in video
     # adapted from https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
     while cap.isOpened():
-        ret, frame = cap.read()
+        frame_returned, frame = cap.read()
         # only consider frames that are a multiple of the sample rate
         if frame is not None and frame_count % sample_rate == 0:
             frame_bgr2rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -99,6 +99,8 @@ def detect_video_stream(args):
             response = detection_handler_stub.handle_detection(message)
             logging.debug(f"just finished frame: {frame_count}")
         frame_count += 1
+        if not frame_returned:
+            break
     cap.release()
 
 
