@@ -38,10 +38,6 @@ To (re)generate the client, server grpc code, follow the steps below.
  `python -m grpc_tools.protoc -I ~/tensorflow-serving-repo/ -I ~/tensorflow-core-repo --grpc_python_out=proto/generated/ --python_out=proto/genera
 ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
 
-- add the generated python code to the python path
-
- `export PYTHONPATH=.:proto/generated:proto/generated/tensorflow_serving/apis`
-
 - [setup](https://www.tensorflow.org/tfx/serving/docker) and start the tensor flow serving docker container
 
    First time run:
@@ -58,7 +54,7 @@ ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
 
 - Run video detection script
 
- `python detect_video_stream_tf_serving.py ~/Videos/train-passenger-foot-stuck.mp4  ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt 8500 ssd_mobilenet_v1_coco --cutoff 70 --handler_port=50001`
+ `bash run_with_env.sh python detect_video_stream_tf_serving.py ~/Videos/train-passenger-foot-stuck.mp4  ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt 8500 ssd_mobilenet_v1_coco --cutoff 70 --handler_port=50001`
 
 ## Running Directly with Tensorflow Libraries (Conda or alternatives)
 - Download or clone the [tensorflow core repo](https://github.com/tensorflow/tensorflow). This will make available several models that can be used to run inferences.
