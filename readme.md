@@ -70,6 +70,11 @@ ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
 
   `python detect_video_stream_tf_libs.py ~/Videos/train-passenger-foot-stuck.mp4 ~/tensorflow-models-repo/research/object_detection/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt --cutoff 70 --handler_port=50002`
 
+## Testing
+Individual tests can be run like this:
+
+`bash run_with_env.sh pytest detect_video_stream_utils_test.py --disable-warnings --log-cli-level=DEBUG`
+
 ## Related Projects
 - https://github.com/kunadawa/object-detection-event-web-server
 - https://github.com/kunadawa/object-detection-react-app
