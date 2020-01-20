@@ -199,3 +199,21 @@ def test_create_prediction_request():
     request = predict_pb2.PredictRequest(
                 model_spec=model_pb2.ModelSpec(name='good model'),
                 inputs={'image_tensor:0': tf.make_tensor_proto(array)})
+
+
+def test_filter_detection_output_from_tf_response():
+    msg = predict_pb2.PredictResponse()
+    with open('./samples/predict_response_01.bin', 'rb') as f:
+        msg.ParseFromString(f.read())
+    # logging.debug(msg.outputs['detection_scores'])
+    result = detect_video_stream_utils.filter_detection_output_tf_serving(msg.outputs, .75)
+    assert result is not None
+    logging.debug(result)
+    assert len(result['detection_scores']) == 1
+    #assert result['detection_scores'][0] == 0.85
+    assert len(result['detection_classes']) == 1
+    #assert result['detection_classes'][0] == 31
+    assert len(result['detection_scores']) == 1
+    assert isinstance(result['detection_boxes'], numpy.ndarray)
+    assert len(result['detection_boxes'][0]) == 4
+    assert result['detection_boxes'].shape == (1, 4)

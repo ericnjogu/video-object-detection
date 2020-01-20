@@ -71,10 +71,12 @@ def detect_video_stream(args):
             #     tmp_file.write(msg_to_string)
             #     logging.debug(f"wrote detection request to {tmp_file.name}")
             output_dict = prediction_response.outputs
-            detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].float_val,
-                                                                shape=[int(x.size) for x in output_dict['detection_boxes'].tensor_shape.dim])
+            output_dict = detect_video_stream_utils.filter_detection_output_tf_serving(output_dict, cut_off_score)
+            #logging.debug(f'filtered output: {output_dict}')
+            detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(),
+                                                                shape=output_dict['detection_boxes'].shape)
             filtered_category_index = detect_video_stream_utils.class_names_from_index(
-                output_dict['detection_classes'].float_val, category_index)
+                output_dict['detection_classes'], category_index)
             source = detect_video_stream_utils.determine_source_name(args.source)
             instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name)
             # TODO - if someone reruns the same static source (video file), using the same model
@@ -86,8 +88,8 @@ def detect_video_stream(args):
             string_map = {'id': request_id}
             message = detection_handler_pb2.handle_detection_request(
                 start_timestamp=start_time,
-                detection_classes=output_dict['detection_classes'].float_val,
-                detection_scores=output_dict['detection_scores'].float_val,
+                detection_classes=output_dict['detection_classes'],
+                detection_scores=output_dict['detection_scores'],
                 detection_boxes=detection_boxes,
                 instance_name=instance_name,
                 frame=detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),

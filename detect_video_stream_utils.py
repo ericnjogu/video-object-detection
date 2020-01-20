@@ -2,6 +2,8 @@ import os
 import platform
 import sys
 import hashlib
+import numpy
+import logging
 
 def determine_input_arg(arg_val, default_arg_val):
     """ if arg_val exists, use it, else return default_arg_val """
@@ -139,3 +141,34 @@ def create_detection_request_id(*args):
     # credit https://stackoverflow.com/a/5100431/315385
     id_str = ''.join(str(x) for x in args)
     return hashlib.sha256(id_str.encode('utf-8')).hexdigest()
+
+def filter_detection_output_tf_serving(detection_output_dict, cut_off_score):
+    """
+    drop all detections from the protobuf (from tensor flow serving) whose score is less than the cut_off_score
+
+    args:
+    detection_output_dict - A dict returned frrom running obj_detect.run_inference_for_single_image()
+    cut_off_score - the minimum score to retain detections which is the percentage divided by 100. e.g. 30% will be passed in as 0.3
+
+    return - the filtered dict
+    """
+    result = {}
+    # create a lambda function that returns an iterable of True/False values using map() on scores
+    score_retain_status_iter = lambda : map(lambda score: score >= cut_off_score, detection_output_dict['detection_scores'].float_val)
+    # logging.debug(f"true/false values of matching scores : {list(score_retain_status_iter())}")
+    # use the true/false values to filter out detection classes in the corresponding positions
+    iterator  = score_retain_status_iter()
+    result['detection_classes'] = list(filter(lambda x: next(iterator), detection_output_dict['detection_classes'].float_val))
+    # use the true/false values to filter out detection boxes in the corresponding positions
+    iterator  = score_retain_status_iter()
+    # logging.debug(detection_output_dict['detection_boxes'].tensor_shape.dim[1:])
+    boxes = numpy.array(detection_output_dict['detection_boxes'].float_val, numpy.float64).reshape(
+                [int(x.size) for x in detection_output_dict['detection_boxes'].tensor_shape.dim[1:]]
+            )
+    boxes = boxes[list(iterator)]
+    result['detection_boxes'] = boxes
+    # use the true/false values to filter out detection scores in the corresponding positions
+    iterator  = score_retain_status_iter()
+    result['detection_scores'] = list(filter(lambda x: next(iterator), detection_output_dict['detection_scores'].float_val))
+
+    return result
