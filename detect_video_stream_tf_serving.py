@@ -95,7 +95,8 @@ def detect_video_stream(args):
                     category_index=filtered_category_index,
                     string_map=string_map)
                 response = detection_handler_stub.handle_detection(message)
-                logging.debug(f"just finished frame: {total_frame_count}")
+                # https://stackoverflow.com/a/517523/315385
+                print(f"just finished frame: {total_frame_count}\r", end='')
                 prediction_frame_count += 1
         total_frame_count += 1
         if not frame_returned:
