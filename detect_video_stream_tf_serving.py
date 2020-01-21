@@ -65,12 +65,6 @@ def detect_video_stream(args):
                         model_spec=model_pb2.ModelSpec(name=model_name),
                         inputs={'inputs': tf.compat.v1.make_tensor_proto(img_to_array)})
             prediction_response =  tensorflow_serving_stub.Predict(prediction_request, 10.0)
-            #print(json_format.MessageToJson(prediction_response))
-            # with tempfile.NamedTemporaryFile(mode='w+b', delete=False) as tmp_file:
-            #     msg_to_string = prediction_response.SerializeToString()
-            #     #logging.debug(msg_to_string)
-            #     tmp_file.write(msg_to_string)
-            #     logging.debug(f"wrote detection request to {tmp_file.name}")
             output_dict = prediction_response.outputs
             output_dict = detect_video_stream_utils.filter_detection_output_tf_serving(output_dict, cut_off_score)
             if len(output_dict['detection_boxes']) > 0:
