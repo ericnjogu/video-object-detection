@@ -46,7 +46,8 @@ def detect_video_stream(args):
     sample_rate = detect_video_stream_utils.determine_samplerate(args.samplerate, SAMPLE_RATE)
     cap = detect_video_stream_utils.determine_source(args, cv2.VideoCapture)
     float_map = {'frame_height': cap.get(cv2.CAP_PROP_FRAME_HEIGHT), 'frame_width': cap.get(cv2.CAP_PROP_FRAME_WIDTH)}
-    frame_count = 0
+    total_frame_count = 0
+    prediction_frame_count = 0
     start_time = dt.now().timestamp()
     cut_off_score = detect_video_stream_utils.determine_cut_off_score(args, default_cut_off=CUT_OFF_SCORE)
     logging.debug(f"using a cut off score of {cut_off_score}")
@@ -56,7 +57,7 @@ def detect_video_stream(args):
     while cap.isOpened():
         frame_returned, frame = cap.read()
         # only consider frames that are a multiple of the sample rate
-        if frame is not None and frame_count % sample_rate == 0:
+        if frame is not None and total_frame_count % sample_rate == 0:
             frame_bgr2rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img_to_array = np.expand_dims(frame_bgr2rgb, axis=0)
             # run inference
@@ -72,38 +73,41 @@ def detect_video_stream(args):
             #     logging.debug(f"wrote detection request to {tmp_file.name}")
             output_dict = prediction_response.outputs
             output_dict = detect_video_stream_utils.filter_detection_output_tf_serving(output_dict, cut_off_score)
-            #logging.debug(f'filtered output: {output_dict}')
-            detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(),
-                                                                shape=output_dict['detection_boxes'].shape)
-            filtered_category_index = detect_video_stream_utils.class_names_from_index(
-                output_dict['detection_classes'], category_index)
-            source = detect_video_stream_utils.determine_source_name(args.source)
-            instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name)
-            # TODO - if someone reruns the same static source (video file), using the same model
-            #  (which could be provided via instance name), we expect the same id for each frame
-            #  for live streams (cameras, network sources), detect_video_stream_utils.determine_source()
-            #  could be changed to append the start timestamp to the source
-            request_id = detect_video_stream_utils.create_detection_request_id\
-                (instance_name, source, frame_count)
-            string_map = {'id': request_id}
-            message = detection_handler_pb2.handle_detection_request(
-                start_timestamp=start_time,
-                detection_classes=output_dict['detection_classes'],
-                detection_scores=output_dict['detection_scores'],
-                detection_boxes=detection_boxes,
-                instance_name=instance_name,
-                frame=detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
-                frame_count=frame_count,
-                source=source,
-                float_map=float_map,
-                category_index=filtered_category_index,
-                string_map=string_map)
-            response = detection_handler_stub.handle_detection(message)
-            logging.debug(f"just finished frame: {frame_count}")
-        frame_count += 1
+            if len(output_dict['detection_boxes']) > 0:
+                #logging.debug(f'filtered output: {output_dict}')
+                detection_boxes = detection_handler_pb2.float_array(numbers=output_dict['detection_boxes'].ravel(),
+                                                                    shape=output_dict['detection_boxes'].shape)
+                filtered_category_index = detect_video_stream_utils.class_names_from_index(
+                    output_dict['detection_classes'], category_index)
+                source = detect_video_stream_utils.determine_source_name(args.source)
+                instance_name = detect_video_stream_utils.determine_instance_name(args.instance_name)
+                # TODO - if someone reruns the same static source (video file), using the same model
+                #  (which could be provided via instance name), we expect the same id for each frame
+                #  for live streams (cameras, network sources), detect_video_stream_utils.determine_source()
+                #  could be changed to append the start timestamp to the source
+                request_id = detect_video_stream_utils.create_detection_request_id\
+                    (instance_name, source, total_frame_count)
+                string_map = {'id': request_id}
+                message = detection_handler_pb2.handle_detection_request(
+                    start_timestamp=start_time,
+                    detection_classes=output_dict['detection_classes'],
+                    detection_scores=output_dict['detection_scores'],
+                    detection_boxes=detection_boxes,
+                    instance_name=instance_name,
+                    frame=detection_handler_pb2.float_array(numbers=frame.ravel(), shape=frame.shape),
+                    frame_count=total_frame_count,
+                    source=source,
+                    float_map=float_map,
+                    category_index=filtered_category_index,
+                    string_map=string_map)
+                response = detection_handler_stub.handle_detection(message)
+                logging.debug(f"just finished frame: {total_frame_count}")
+                prediction_frame_count += 1
+        total_frame_count += 1
         if not frame_returned:
             break
     cap.release()
+    logging.info(f" predictions/total frames : {prediction_frame_count}/{total_frame_count}")
 
 
 if __name__ == "__main__":
