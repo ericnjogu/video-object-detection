@@ -172,3 +172,11 @@ def filter_detection_output_tf_serving(detection_output_dict, cut_off_score):
     result['detection_scores'] = list(filter(lambda x: next(iterator), detection_output_dict['detection_scores'].float_val))
 
     return result
+
+def write_protobuf_message_to_file(message):
+    """ save request to file for further testing """
+    with tempfile.NamedTemporaryFile(mode='w+b', delete=False) as tmp_file:
+        msg_to_string = message.SerializeToString()
+        #logging.debug(msg_to_string)
+        tmp_file.write(msg_to_string)
+        logging.debug(f"wrote detection request to {tmp_file.name}")
