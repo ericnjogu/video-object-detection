@@ -9,9 +9,10 @@ import pytest
 import platform
 from datetime import datetime
 from proto.generated.tensorflow_serving.apis import predict_pb2, model_pb2
+from proto.generated import detection_handler_pb2
 import numpy
 import tensorflow as tf
-#from proto.generated.tensorflow.core.framework import tensor_pb2
+import redis
 
 
 @pytest.fixture(scope='function')
@@ -217,3 +218,22 @@ def test_filter_detection_output_from_tf_response():
     assert isinstance(result['detection_boxes'], numpy.ndarray)
     assert len(result['detection_boxes'][0]) == 4
     assert result['detection_boxes'].shape == (1, 4)
+
+def test_save_predict_response_to_redis():
+    msg = detection_handler_pb2.handle_detection_request()
+    with open('./samples/detection_request_01.bin', 'rb') as f:
+        msg.ParseFromString(f.read())
+    redis_client = redis.Redis()
+    pubsub = redis_client.pubsub()
+    channel_name = 'test'
+    pubsub.subscribe(channel_name)
+    binary_string = msg.SerializeToString()
+    for _ in range(100):
+        redis_client.publish(channel_name, binary_string)
+
+    msg_rcvd = detection_handler_pb2.handle_detection_request()
+    # first get_message appears to be returning a '1' in the data
+    pubsub.get_message()
+    msg_rcvd.ParseFromString(pubsub.get_message()['data'])
+    assert msg_rcvd is not None
+    assert msg_rcvd.outputs['detection_boxes'] is not None
