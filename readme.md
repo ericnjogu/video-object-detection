@@ -54,7 +54,7 @@ ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
 
 - Run video detection script
 
- `bash run_with_env.sh python detect_video_stream_tf_serving.py ~/Videos/train-passenger-foot-stuck.mp4  ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt 8500 ssd_mobilenet_v1_coco --cutoff 70 --handler_port=50001`
+ `bash run_with_env.sh python detect_video_stream_tf_serving.py ~/Videos/train-passenger-foot-stuck.mp4  ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt 8500 ssd_mobilenet_v1_coco predictions --cutoff 70`
 
 ## Running Directly with Tensorflow Libraries (Conda or alternatives)
 - Download or clone the [tensorflow core repo](https://github.com/tensorflow/tensorflow). This will make available several models that can be used to run inferences.

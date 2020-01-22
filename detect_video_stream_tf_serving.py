@@ -10,6 +10,7 @@ from datetime import datetime as dt
 import grpc
 import google.protobuf.json_format as json_format
 import tensorflow as tf
+import redis
 
 from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
 import video_object_detection as obj_detect
@@ -24,12 +25,9 @@ HANDLER_PORT = 50051
 
 def detect_video_stream(args):
     """ detect objects in video stream """
-    # setup grpc comms to detection handler
-    handler_port = detect_video_stream_utils.determine_handler_port(args.handler_port, HANDLER_PORT)
-    url = f'localhost:{handler_port}'
-    logging.debug(f'connecting to handler at {url}')
-    detection_handler_channel = grpc.insecure_channel(url)
-    detection_handler_stub = detection_handler_pb2_grpc.DetectionHandlerStub(detection_handler_channel)
+
+    # setup redis
+    redis_client = redis.Redis()
 
     # setup grpc comms to tensorflow serving
     tensorflow_serving_port = args.tensorflow_serving_port
@@ -94,15 +92,14 @@ def detect_video_stream(args):
                     float_map=float_map,
                     category_index=filtered_category_index,
                     string_map=string_map)
-                response = detection_handler_stub.handle_detection(message)
-                # https://stackoverflow.com/a/517523/315385
-                print(f"just finished frame: {total_frame_count}\r", end='')
+                redis_client.publish(args.channel_name, message.SerializeToString())
+                print(f'placed request on redis, frame_count: {message.frame_count}, instance: {message.instance_name}, source: {message.source}\r', end='')
                 prediction_frame_count += 1
         total_frame_count += 1
         if not frame_returned:
             break
     cap.release()
-    logging.info(f" predictions/total frames : {prediction_frame_count}/{total_frame_count}")
+    logging.info(f"\npredictions/total frames : {prediction_frame_count}/{total_frame_count}")
 
 
 if __name__ == "__main__":
@@ -114,10 +111,10 @@ if __name__ == "__main__":
     parser.add_argument("path_to_label_map", help="path to label map")
     parser.add_argument("tensorflow_serving_port", help="the grpc port to request prediction results from")
     parser.add_argument("model_name", help="the model name")
+    parser.add_argument("channel_name", help="channel to subscribe to for detection handling requests")
     parser.add_argument("--cutoff", help="cut off detection score (%%), a value between 1 and 100")
     parser.add_argument("--dryrun", help="echo a params as json object, don't process anything", action="store_true")
     parser.add_argument("--samplerate", help="how often to retrieve video frames for object detection")
     parser.add_argument("--instance_name", help="a descriptive name for this detection instance e.g. hostname")
-    parser.add_argument("--handler_port", help="the port to grpc detection results to")
     args = parser.parse_args()
     detect_video_stream(args)
