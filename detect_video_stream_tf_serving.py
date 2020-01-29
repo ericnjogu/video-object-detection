@@ -2,8 +2,6 @@
 import logging
 import argparse
 import sys
-import json
-import cv2
 import numpy as np
 import object_detection.utils.label_map_util as label_utils
 from datetime import datetime as dt
@@ -11,7 +9,6 @@ import grpc
 import google.protobuf.json_format as json_format
 import tensorflow as tf
 import redis
-import tempfile
 import imageio
 
 from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
