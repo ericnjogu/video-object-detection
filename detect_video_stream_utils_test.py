@@ -13,6 +13,8 @@ from proto.generated import detection_handler_pb2
 import numpy
 import tensorflow as tf
 import redis
+import time
+import datetime
 
 
 @pytest.fixture(scope='function')
@@ -228,11 +230,14 @@ def test_save_predict_response_to_redis():
     channel_name = 'test'
     pubsub.subscribe(channel_name)
     binary_string = msg.SerializeToString()
-    for _ in range(100):
+    for _ in range(30):
         redis_client.publish(channel_name, binary_string)
+        logging.debug("%s: published message to reddis", datetime.datetime.now())
+        time.sleep(1)
 
     msg_rcvd = detection_handler_pb2.handle_detection_request()
     # first get_message appears to be returning a '1' in the data
+    logging.debug("%s: retrieving essage from reddis", datetime.datetime.now())
     pubsub.get_message()
     msg_rcvd.ParseFromString(pubsub.get_message()['data'])
     assert msg_rcvd is not None
