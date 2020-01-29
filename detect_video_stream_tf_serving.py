@@ -11,12 +11,13 @@ import grpc
 import google.protobuf.json_format as json_format
 import tensorflow as tf
 import redis
+import tempfile
+import imageio
 
 from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
 import video_object_detection as obj_detect
 import detect_video_stream_utils
 from proto.generated.tensorflow_serving.apis import predict_pb2, model_pb2, prediction_service_pb2_grpc
-import tempfile
 
 CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5
@@ -42,8 +43,8 @@ def detect_video_stream(args):
     # TODO validate args
     # determine sample rate
     sample_rate = detect_video_stream_utils.determine_samplerate(args.samplerate, SAMPLE_RATE)
-    cap = detect_video_stream_utils.determine_source(args, cv2.VideoCapture)
-    float_map = {'frame_height': cap.get(cv2.CAP_PROP_FRAME_HEIGHT), 'frame_width': cap.get(cv2.CAP_PROP_FRAME_WIDTH)}
+    video_reader = detect_video_stream_utils.determine_source(args, imageio.get_reader)
+    float_map = {'frame_height': video_reader.get_meta_data()['size'][0], 'frame_width': video_reader.get_meta_data()['size'][1]}
     total_frame_count = 0
     prediction_frame_count = 0
     start_time = dt.now().timestamp()
@@ -51,13 +52,10 @@ def detect_video_stream(args):
     logging.debug(f"using a cut off score of {cut_off_score}")
     model_name = args.model_name
     # loop over frames in video
-    # adapted from https://github.com/juandes/pikachu-detection/blob/master/detection_video.py
-    while cap.isOpened():
-        frame_returned, frame = cap.read()
+    for frame in video_reader:
         # only consider frames that are a multiple of the sample rate
         if frame is not None and total_frame_count % sample_rate == 0:
-            frame_bgr2rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img_to_array = np.expand_dims(frame_bgr2rgb, axis=0)
+            img_to_array = np.expand_dims(frame, axis=0)
             # run inference
             prediction_request = predict_pb2.PredictRequest(
                         model_spec=model_pb2.ModelSpec(name=model_name),
@@ -96,9 +94,6 @@ def detect_video_stream(args):
                 print(f'placed request on redis, frame_count: {message.frame_count}, instance: {message.instance_name}, source: {message.source}\r', end='')
                 prediction_frame_count += 1
         total_frame_count += 1
-        if not frame_returned:
-            break
-    cap.release()
     logging.info(f"\npredictions/total frames : {prediction_frame_count}/{total_frame_count}")
 
 
