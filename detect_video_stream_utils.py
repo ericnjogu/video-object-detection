@@ -4,6 +4,7 @@ import sys
 import hashlib
 import numpy
 import logging
+import tempfile
 
 def determine_input_arg(arg_val, default_arg_val):
     """ if arg_val exists, use it, else return default_arg_val """
