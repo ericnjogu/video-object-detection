@@ -180,4 +180,4 @@ def write_protobuf_message_to_file(message):
         msg_to_string = message.SerializeToString()
         #logging.debug(msg_to_string)
         tmp_file.write(msg_to_string)
-        logging.debug(f"wrote detection request to {tmp_file.name}")
+        logging.debug(f"\nwrote detection request to {tmp_file.name}")
