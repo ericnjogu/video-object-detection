@@ -56,20 +56,6 @@ ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
 
  `bash run_with_env.sh python detect_video_stream_tf_serving.py ~/Videos/train-passenger-foot-stuck.mp4  ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt 8500 ssd_mobilenet_v1_coco predictions --cutoff 70`
 
-## Running Directly with Tensorflow Libraries (Conda or alternatives)
-- Download or clone the [tensorflow core repo](https://github.com/tensorflow/tensorflow). This will make available several models that can be used to run inferences.
-- add the generated python code to the python path
-
-   `export PYTHONPATH=.:[qualified/path/to/]proto/generated/`
-
-- start the sample standard output detection handler
-
-  `python samples/stdout_detection_handler.py`
-
-- Attempt to detect objects in a video. This example uses the ssd_mobilenet_v1_coco_2017_11_17 model in the downloaded tensorflow repo
-
-  `python detect_video_stream_tf_libs.py ~/Videos/train-passenger-foot-stuck.mp4 ~/tensorflow-models-repo/research/object_detection/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb ~/tensorflow-models-repo/research/object_detection/data/mscoco_complete_label_map.pbtxt --cutoff 70 --handler_port=50002`
-
 ## Testing
 Individual tests can be run like this:
 
