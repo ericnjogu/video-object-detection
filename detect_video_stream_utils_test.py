@@ -221,7 +221,7 @@ def test_filter_detection_output_from_tf_response():
     assert len(result['detection_boxes'][0]) == 4
     assert result['detection_boxes'].shape == (1, 4)
 
-def test_save_predict_response_to_redis():
+def inactive_test_save_predict_response_to_redis():
     msg = detection_handler_pb2.handle_detection_request()
     with open('./samples/detection_request_01.bin', 'rb') as f:
         msg.ParseFromString(f.read())
