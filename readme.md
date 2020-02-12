@@ -20,24 +20,13 @@ The aggregation can be handled by via another shared counter, say counter <msg-i
 
 Once the two counters are equal, the message is placed on another broadcast channel where other services take the message and deliver it appropriately.
 
-## Conda Setup
-Run `conda create --name <env> --file package-list-linux-64.txt` to setup a conda environment
-
-## Handler Service Setup
-It is possible to transmit the results of a detection to a detection handling service for more processing - e.g. visualizing boxes, database storage.
-
-To (re)generate the client, server grpc code, follow the steps below.
-
-* Generate the code - `python -m grpc_tools.protoc -I proto --grpc_python_out=proto/generated/ --python_out=proto/generated proto/detection_handler.proto`
+## Setup
+A conda environment is created first and when activated, additional pip packages are installed.
+ - Run `conda env create -f env.yaml` to setup a conda environment
+ - activate environment `source activate object_detection_mini`
+ - install pip packages `pip install -r requirements.txt  --no-deps`
 
 ## Running with Tensorflow Serving (Docker)
-- clone or download the [tensorflow serving repo](https://github.com/tensorflow/serving/blob/master/tensorflow_serving/apis/prediction_service.proto)
-- Download or clone the [tensorflow core repo](https://github.com/tensorflow/tensorflow). This will make available several models that can be used to run inferences.
-- generate the tensor flow prediction service python grpc stubs - note the tensorflow core and tensorflow serving repo local roots have been given to resolve the protobuf dependencies
-
- `python -m grpc_tools.protoc -I ~/tensorflow-serving-repo/ -I ~/tensorflow-core-repo --grpc_python_out=proto/generated/ --python_out=proto/genera
-ted ~/tensorflow-serving-repo/tensorflow_serving/apis/*.proto`
-
 - [setup](https://www.tensorflow.org/tfx/serving/docker) and start the tensor flow serving docker container
 
    First time run:
