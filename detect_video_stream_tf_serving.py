@@ -11,10 +11,10 @@ import tensorflow as tf
 import redis
 import imageio
 
-from proto.generated import detection_handler_pb2_grpc, detection_handler_pb2
+from juu_object_detection_protos.api.generated import detection_handler_pb2
 import video_object_detection as obj_detect
 import detect_video_stream_utils
-from proto.generated.tensorflow_serving.apis import predict_pb2, model_pb2, prediction_service_pb2_grpc
+from juu_object_detection_protos.api.generated.tensorflow_serving.apis import predict_pb2, model_pb2, prediction_service_pb2_grpc
 
 CUT_OFF_SCORE = 90.0
 SAMPLE_RATE = 5

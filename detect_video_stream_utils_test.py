@@ -2,14 +2,15 @@ import subprocess
 import logging
 import sys
 import json
-import detect_video_stream_tf_libs as detect_video_stream, detect_video_stream_utils
+import detect_video_stream_tf_serving as detect_video_stream
+import detect_video_stream_utils
 import unittest.mock as mock
 import tempfile
 import pytest
 import platform
 from datetime import datetime
-from proto.generated.tensorflow_serving.apis import predict_pb2, model_pb2
-from proto.generated import detection_handler_pb2
+from juu_object_detection_protos.api.generated.tensorflow_serving.apis import predict_pb2, model_pb2
+from juu_object_detection_protos.api.generated import detection_handler_pb2
 import numpy
 import tensorflow as tf
 import redis
