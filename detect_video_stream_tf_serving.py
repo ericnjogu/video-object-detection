@@ -10,6 +10,7 @@ import google.protobuf.json_format as json_format
 import tensorflow as tf
 import redis
 import imageio
+import json
 
 from juu_object_detection_protos.api.generated import detection_handler_pb2
 import video_object_detection as obj_detect
@@ -109,4 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--samplerate", help="how often to retrieve video frames for object detection")
     parser.add_argument("--instance_name", help="a descriptive name for this detection instance e.g. hostname")
     args = parser.parse_args()
-    detect_video_stream(args)
+    if args.dryrun:
+        print(json.dumps(args.__dict__))
+    else:
+        detect_video_stream(args)
