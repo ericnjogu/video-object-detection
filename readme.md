@@ -53,6 +53,7 @@ Individual tests can be run like this:
 ## Related Projects
 - https://github.com/kunadawa/object-detection-event-web-server
 - https://github.com/kunadawa/object-detection-react-app
+- https://github.com/ericnjogu/object-detection-protos
 
 
 ## Resources
